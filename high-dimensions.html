@@ -1,0 +1,1000 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>High Dimensions: Why Models Lift Their Data</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"><style>:root{--bg:#eef1f5;--surface:#ffffff;--sunk:#f6f8fa;--ink:#15202c;--muted:#5b6878;--line:#d8dee6;--grid:#e8ecf1;--q:#d9480f;--k:#1c6fb0;--v:#0f8a4f;--sc:#7048e8;--neg:#a86a00;--dk:#c2187a;--truth:#0f8a4f;--pt:#4a5868;--eq:#f4f1fb;--eqline:#d9d0f3;--display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1116;--surface:#151c24;--sunk:#111820;--ink:#e4eaf0;--muted:#95a3b2;--line:#2b3542;--grid:#202934;--q:#ef6a33;--k:#4a9fe0;--v:#3fb36e;--sc:#9d7cf5;--neg:#d09a2c;--dk:#e0619f;--truth:#40a960;--pt:#a9b6c4;--eq:#1b1d2e;--eqline:#3a3460;color-scheme:dark}}:root[data-theme=dark]{--bg:#0c1116;--surface:#151c24;--sunk:#111820;--ink:#e4eaf0;--muted:#95a3b2;--line:#2b3542;--grid:#202934;--q:#ef6a33;--k:#4a9fe0;--v:#3fb36e;--sc:#9d7cf5;--neg:#d09a2c;--dk:#e0619f;--truth:#40a960;--pt:#a9b6c4;--eq:#1b1d2e;--eqline:#3a3460;color-scheme:dark}*{box-sizing:border-box}[hidden]{display:none!important}html{height:100%;font-size:clamp(13px,.5vw + 7px,18px)}body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.5}h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}p{margin:0}button{font:500 .9rem var(--body);border-radius:.5rem;border:1px solid var(--line);background:var(--sunk);color:var(--ink);padding:.42rem .8rem;cursor:pointer}button:hover:not(:disabled){border-color:var(--muted)}button:disabled{opacity:.45;cursor:not-allowed}button.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}button.on{background:var(--q);border-color:var(--q);color:#fff}.btns button{display:inline-flex;align-items:center;gap:.4rem}.ic{width:.85em;height:.85em;fill:currentColor;flex:none}button.calc{background:var(--sc);border:2px solid var(--sc);color:#fff;font-weight:600;padding:.45rem 1.05rem;box-shadow:0 2px 0 color-mix(in srgb,var(--sc) 55%,#000)}button.calc:hover:not(:disabled){filter:brightness(1.08);border-color:var(--sc)}button.calc.running{background:var(--surface);color:var(--sc);box-shadow:none}button:focus-visible,input:focus-visible,select:focus-visible,[role=tab]:focus-visible,.cell:focus-visible{outline:2px solid var(--k);outline-offset:2px}select{font:.86rem var(--mono);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:.4rem;padding:.25rem .4rem;min-width:0;width:100%}input[type=range]{width:100%;accent-color:var(--q);min-width:0}mjx-container{color:inherit}mjx-container[display=true]{margin:.4em 0!important}.eqcard mjx-container[display=true]{margin:.6em 0!important}.dd{color:var(--dk)}.qq{color:var(--q)}.kk{color:var(--k)}.vv{color:var(--v)}.ss{color:var(--sc)}.nn{color:var(--neg)}g.off,.off{opacity:.18}.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}.top{display:flex;align-items:center;gap:.6rem 1.6rem;flex-wrap:wrap;padding:.55rem 1.2rem;background:var(--surface);border-bottom:1px solid var(--line)}.brand{display:flex;flex-direction:column;margin-right:auto;min-width:0}.brand h1{font-size:1.45rem;font-weight:700;line-height:1.1}.brand span{font:500 .7rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.trail{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}.trail button{border-radius:999px;padding:.24rem .75rem;font:500 .84rem var(--body);background:0 0;color:var(--muted)}.trail button.done{color:var(--ink);border-color:var(--muted)}.trail button.lit{background:var(--ink);color:var(--surface);border-color:var(--ink)}.trail i{color:var(--muted);font-style:normal;font-size:.9rem}#fs{padding:.35rem .6rem;font-size:.84rem}.main{display:grid;grid-template-columns:clamp(290px,24vw,28rem) minmax(0,1fr);min-height:0}.rail{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0;background:var(--surface);border-right:1px solid var(--line)}.rail-body{overflow-y:auto;min-height:0;padding:1rem 1.2rem 1.2rem}.rp{display:flex;flex-direction:column;gap:.8rem}.rp .eyebrow{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.rp h2{font-size:1.4rem;font-weight:700;line-height:1.15}.rp p{font-size:.95rem;max-width:60ch}.eqcard{background:var(--eq);border:1px solid var(--eqline);border-radius:.7rem;padding:.4rem .8rem;font-size:1.02rem;overflow-x:auto;overflow-y:hidden}.row{display:grid;grid-template-columns:6.4rem minmax(0,1fr) 4.4rem;align-items:center;gap:.5rem}.row label{font-size:.86rem;color:var(--muted)}.row output{font:.86rem var(--mono);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.row.wide{grid-template-columns:6.4rem minmax(0,1fr)}.btns{display:flex;flex-wrap:wrap;gap:.5rem}.check{display:flex;gap:.5rem;align-items:center;font-size:.9rem;color:var(--ink);cursor:pointer}.check input{margin:0;accent-color:var(--q)}.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--line);border-radius:.5rem;overflow:hidden;background:var(--sunk);width:100%}.seg label{position:relative;cursor:pointer}.seg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}.seg span{display:block;padding:.3rem .5rem;font:500 .84rem var(--body);color:var(--muted);text-align:center;white-space:nowrap}.seg input:checked+span{background:var(--ink);color:var(--surface)}.seg input:focus-visible+span{outline:2px solid var(--k);outline-offset:-2px}.ro{border-collapse:collapse;width:100%;font:.86rem var(--mono);font-variant-numeric:tabular-nums}.ro th{font:500 .8rem var(--body);color:var(--muted);text-align:right;padding:.2rem .4rem;border-bottom:1px solid var(--line)}.ro td{text-align:right;padding:.22rem .4rem;border-bottom:1px solid var(--grid);white-space:nowrap}.ro th:first-child,.ro td:first-child{text-align:left;color:var(--muted);font-family:var(--body)}.bridge{font-size:.88rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:.7rem}.bridge b{color:var(--ink);font-weight:600}.railnav{border-top:1px solid var(--line);padding:.7rem 1.2rem;display:flex;gap:.5rem;align-items:center;justify-content:space-between;background:var(--surface)}.railnav .keys{font:.66rem var(--mono);color:var(--muted);text-align:center;min-width:0;flex:1}.railnav button{white-space:nowrap;flex:none}.stage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);min-height:0;min-width:0}.vtabs{display:flex;gap:.2rem;padding:.45rem 1rem 0;border-bottom:1px solid var(--line);overflow-x:auto;background:var(--bg)}.vtabs button{border:1px solid transparent;border-bottom:0;border-radius:.5rem .5rem 0 0;background:0 0;color:var(--muted);padding:.45rem .8rem .5rem;white-space:nowrap;display:flex;gap:.45rem;align-items:baseline}.vtabs button kbd{font:.68rem var(--mono);opacity:.8}.vtabs button[aria-selected=true]{background:var(--surface);border-color:var(--line);color:var(--ink);margin-bottom:-1px;padding-bottom:calc(.5rem + 1px)}.views{position:relative;min-height:0;background:var(--surface)}.view{position:absolute;inset:0;display:flex;flex-direction:column;gap:.7rem;padding:.8rem 1.2rem 1rem;min-height:0;min-width:0}.panel{display:flex;flex-direction:column;gap:.35rem;min-height:0;min-width:0;flex:1}.ph{display:flex;align-items:baseline;gap:.4rem 1rem;flex-wrap:wrap}.ph h2{font-size:1.08rem;font-weight:600}.key{display:flex;flex-wrap:wrap;gap:.2rem 1rem;font-size:.84rem;color:var(--muted);align-items:center}.key span{display:inline-flex;align-items:center;gap:.35rem}.sw{width:1.2rem;height:0;border-top:3px solid;display:inline-block}.dot{width:.6rem;height:.6rem;border-radius:50%;display:inline-block}.cv{flex:1;min-height:0;position:relative;overflow:hidden}.cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.ovl{position:absolute;transform:translateY(-50%);pointer-events:none;white-space:nowrap;font-size:1rem;line-height:1}.ovl.r{text-align:right}.pair{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1rem}.pair.wl{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}.stack{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,1.5fr) minmax(0,1fr);gap:.5rem}.stack6{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,.9fr) minmax(0,1.3fr);gap:.8rem}.eqstrip{font-size:1rem;background:var(--eq);border:1px solid var(--eqline);border-radius:.6rem;padding:.35rem .8rem;overflow-x:auto;overflow-y:hidden;white-space:nowrap;min-height:2.6rem;display:flex;align-items:center}.cap{font-size:.84rem;color:var(--muted)}.mmwrap{flex:1;min-height:0;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding-top:.3rem}.mm{--cs:clamp(2.3rem,4.6vh,3.4rem);display:grid;gap:3px;font:.8rem var(--mono);font-variant-numeric:tabular-nums}.mm .cell{display:grid;place-items:center;border-radius:.3rem;background:var(--sunk);color:var(--ink);transition:background .35s,box-shadow .2s,transform .2s,opacity .2s;user-select:none}.mm .cell.s{cursor:pointer;font-size:.86rem}.mm .cell.dim{opacity:.35}.mm .cell.hl{box-shadow:0 0 0 2px var(--ink);transform:scale(1.04);z-index:1}.mm .cell.sel{box-shadow:0 0 0 2.5px var(--ink);z-index:2}.mm .cell.empty{color:transparent}.mm .cell.rmax{box-shadow:inset 0 0 0 2px var(--q)}.mm .lbl{display:flex;align-items:center;font-size:.76rem;color:var(--muted);padding:0 .35rem}.mm .lbl.top{justify-content:center;align-items:flex-end;padding-bottom:.25rem;color:var(--ink);white-space:nowrap;font-size:.72rem}.mm .lbl.tok{justify-content:flex-end;color:var(--ink)}.mm .lbl.hl{color:var(--q);font-weight:600}.mm .lbl.khl{color:var(--k);font-weight:600}.mm .lbl.dimh{justify-content:center;text-align:center;font-size:.66rem;line-height:1.15;padding:.2rem 0}.mm .lbl.side{justify-content:flex-start;font-size:.68rem}.mm .big{display:grid;place-items:center;text-align:center;font-size:1.5rem}.mm .tag{display:grid;place-items:center;font-size:1.05rem}.amat{display:grid;grid-template-columns:auto repeat(5,minmax(0,1fr));gap:2px;font:.76rem var(--mono);font-variant-numeric:tabular-nums}.amat div{text-align:center;padding:.32rem 0;border-radius:3px}.amat .h{color:var(--muted);font-size:.7rem;padding:.15rem 0}.amat .l{text-align:right;color:var(--muted);padding-right:.4rem;cursor:pointer}.amat .l.on{color:var(--q);font-weight:600}.amat .c{cursor:pointer}.amat .c.on{box-shadow:inset 0 0 0 1.5px var(--ink)}.side5{display:flex;flex-direction:column;gap:.6rem;min-width:0;overflow:auto}.chips{display:flex;flex-wrap:wrap;gap:.35rem}.chips button{padding:.25rem .65rem;font:500 .86rem var(--mono)}.chips button[aria-pressed=true]{background:var(--q);border-color:var(--q);color:#fff}.map{border-collapse:collapse;width:100%;font-size:.88rem}.map th{font:500 .72rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:.2rem .4rem;border-bottom:1px solid var(--line)}.map td{padding:.24rem .4rem;border-bottom:1px solid var(--grid)}.map td:first-child{color:var(--muted)}.roles{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.3rem .7rem;align-items:center;font-size:.9rem}.roles .who{font-size:1rem}.zline{font-size:.95rem;line-height:1.9;overflow-x:auto;overflow-y:hidden}@media (prefers-reduced-motion:reduce){.mm .cell{transition:none}}@media (max-width:860px){body{overflow:auto}.app{height:auto}.main{grid-template-columns:minmax(0,1fr)}.rail{border-right:0;border-bottom:1px solid var(--line)}.rail-body{overflow:visible}.views{height:auto}.view{position:relative;inset:auto;min-height:0}.pair,.pair.wl{grid-template-columns:minmax(0,1fr);grid-auto-rows:20rem}.stack{grid-template-rows:20rem 13rem}.stack6{grid-template-rows:15rem auto}.stack6 .pair{grid-auto-rows:19rem}.panel{min-height:14rem}.mmwrap{justify-content:flex-start}}
+.note{font-size:.86rem;color:var(--muted)}
+.row input[type=range]:disabled{opacity:.4}
+.rp h3.eyebrow{margin-top:.2rem}
+.big{font:600 1.6rem var(--display);font-variant-numeric:tabular-nums}
+.stat2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+.stat2>div{background:var(--sunk);border:1px solid var(--line);border-radius:.6rem;padding:.45rem .7rem;display:flex;flex-direction:column}
+.stat2 span{font:500 .72rem var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+</style></head><body><div class="app"><header class="top"><div class="brand"><h1>High Dimensions: Why Models Lift Their Data</h1><span>Seven views of one idea, and its catch</span></div><nav class="trail" id="trail" aria-label="The story"><button data-g="0">Tangled</button><i>→</i><button data-g="1">Lift</button><i>→</i><button data-g="2">Width</button><i>→</i><button data-g="3">Capacity</button><i>→</i><button data-g="4">Room</button><i>→</i><button data-g="5">The catch</button><i>→</i><button data-g="6">Features</button></nav><button id="fs" title="Full screen">Full Screen</button></header><div class="main"><aside class="rail"><div class="rail-body">
+
+<section class="rp" id="r-tang"><span class="eyebrow">1 of 7 · Tangled</span><h2>A straight line can't separate these classes</h2><p>Each data point has two features \((x_1,x_2)\) and a class, <span class="qq">A</span> or <span class="kk">B</span>. A linear classifier can only split the feature space with one straight line.</p><div class="eqcard">\[ \hat y=\operatorname{sign}(w\cdot x+b) \] \[ \text{boundary: } w_1x_1+w_2x_2+b=0\ \ (\text{a line}) \]</div><div class="seg" role="radiogroup" aria-label="Object"><label><input type="radio" name="ds" value="disk" checked><span>Circle</span></label><label><input type="radio" name="ds" value="ring"><span>Ring</span></label><label><input type="radio" name="ds" value="xor"><span>XOR</span></label><label><input type="radio" name="ds" value="spiral"><span>Spirals</span></label></div><div class="stat2"><div><span>line accuracy</span><b class="big" id="tAcc"></b></div><div><span>majority class</span><b class="big" id="tBase"></b></div></div><div class="btns"><button id="tBest" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Find the best line</span></button><button id="tReset">Reset</button></div><p class="note">Drag the two round handles to move the line. The side that classifies more points correctly is taken as class A.</p><p class="bridge">Even the <b>best</b> line is stuck: for the circle and the ring it ties always predicting the majority class, and for XOR and the spirals it stalls around 65–70%. The fix is not a cleverer line: it is <b>one more feature</b>.</p></section>
+
+<section class="rp" id="r-lift" hidden><span class="eyebrow">2 of 7 · Lift</span><h2>Add a dimension and the line becomes a circle</h2><p>Give each point a third feature, its squared distance from the centre. In 3‑D the class A points sit at the bottom of a bowl, and a flat plane slices them off.</p><div class="eqcard">\[ \phi(x)=\big(x_1,\ x_2,\ z\big) \] \[ z=x_1^2+x_2^2\quad\text{or}\quad z=x_1x_2 \] \[ z=h\ \Rightarrow\ x_1^2+x_2^2=h\ \ (\text{a circle}) \]</div><h3 class="eyebrow">Dataset</h3><div class="seg" role="radiogroup" aria-label="Object"><label><input type="radio" name="ds2" value="disk" checked><span>Circle</span></label><label><input type="radio" name="ds2" value="ring"><span>Ring</span></label><label><input type="radio" name="ds2" value="xor"><span>XOR</span></label><label><input type="radio" name="ds2" value="spiral"><span>Spirals</span></label></div><h3 class="eyebrow">Extra feature</h3><div class="seg" role="radiogroup" aria-label="Lift"><label><input type="radio" name="lf" value="r2" checked><span>\(z=x_1^2+x_2^2\)</span></label><label><input type="radio" name="lf" value="xy"><span>\(z=x_1x_2\)</span></label></div><div class="row"><label for="lH">Plane height</label><input id="lH" type="range" min="0" max="1" step="0.01" value="0.15"><output id="lHO"></output></div><div class="stat2"><div><span>plane accuracy</span><b class="big" id="lAcc"></b></div><div><span>best line (ch. 1)</span><b class="big" id="lLine"></b></div></div><div class="btns"><button id="lBest" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Fit the best plane</span></button><button id="lReset">Reset</button></div><p class="note">Drag the 3‑D view to rotate it. <b>Circle</b> works with \(z=x_1^2+x_2^2\), <b>XOR</b> with \(z=x_1x_2\). Now try <b>Ring</b> and press <b>Fit the best plane</b>: a flat cut can only remove the outer circle, so the hole comes out wrong. <b>Spirals</b> defeat both guesses.</p><p class="bridge">The right extra feature makes the problem linear. But we had to <b>guess</b> it, and no single guess fixes the ring or the spirals. Next: don't guess, add <b>many random</b> features.</p></section>
+
+<section class="rp" id="r-wide" hidden><span class="eyebrow">3 of 7 · Width</span><h2>Many random features: an untrained hidden layer</h2><p>Lift each point into \(D\) dimensions with random ReLU units, then fit only a <i>linear</i> readout on top. Each unit is a ramp across the input space; a weighted sum of many ramps can bend the boundary into any shape.</p><div class="eqcard">\[ \phi_j(x)=\max\!\big(0,\ u_j\cdot x-c_j\big),\quad j=1\ldots D \] \[ f(x)=\textstyle\sum_j w_j\,\phi_j(x)+b \] \[ w=(\Phi^{\top}\Phi+\lambda I)^{-1}\Phi^{\top}y \]</div><div class="row"><label for="wD">Width \(D\)</label><input id="wD" type="range" min="0" max="9" step="1" value="3"><output id="wDO"></output></div><div class="stat2"><div><span>train accuracy</span><b class="big" id="wTr"></b></div><div><span>test accuracy</span><b class="big" id="wTe"></b></div></div><div class="btns"><button id="wSweep" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Sweep the width</span></button><button id="wNew">New random units</button><button id="wReset">Reset</button></div><p class="note">The \(u_j, c_j\) are random and never trained: only the readout \(w\) is fitted. Pick the dataset here or in chapter 1.</p><div class="seg" role="radiogroup" aria-label="Object"><label><input type="radio" name="ds3" value="disk" checked><span>Circle</span></label><label><input type="radio" name="ds3" value="ring"><span>Ring</span></label><label><input type="radio" name="ds3" value="xor"><span>XOR</span></label><label><input type="radio" name="ds3" value="spiral"><span>Spirals</span></label></div><p class="bridge">Width alone turns a hard problem into a linear one. This is why hidden layers are wide, and why kernel methods work. How much room does width give, exactly?</p></section>
+
+<section class="rp" id="r-cover" hidden><span class="eyebrow">4 of 7 · Capacity</span><h2>Cover's theorem: how many labelings a plane can fit</h2><p>Scatter \(N\) points in \(d\) dimensions and colour them at random. How often can one flat cut separate the colours? Almost always while \(N<2(d+1)\), almost never after: a sharp edge.</p><div class="eqcard">\[ P(N,d)=\frac{1}{2^{N-1}}\sum_{k=0}^{d}\binom{N-1}{k} \] \[ P=\tfrac12\ \text{ at }\ N=2(d+1) \]</div><div class="row"><label for="cd">Dimension \(d\)</label><input id="cd" type="range" min="1" max="50" step="1" value="10"><output id="cdO"></output></div><div class="row"><label for="cN">Points \(N\) (2‑D)</label><input id="cN" type="range" min="3" max="6" step="1" value="4"><output id="cNO"></output></div><div class="btns"><button id="cRun" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Run trials</span></button><button id="cNew">New 2‑D points</button><button id="cReset">Reset</button></div><p class="note">Trials use a perceptron with an iteration cap, so near the edge they can slightly undercount. The right panel checks every labeling of \(N\) points in 2‑D exhaustively.</p><p class="bridge">More dimensions, more patterns a linear readout can express, including random ones. That is power, and also the ability to <b>memorise noise</b>. Hold that thought for chapter 6.</p></section>
+
+<section class="rp" id="r-room" hidden><span class="eyebrow">5 of 7 · Room</span><h2>In high dimensions, random directions are almost perpendicular</h2><p>Each feature a network learns is a direction in feature space; each direction can stand for one concept. In 2‑D, two random directions can point anywhere. In 768‑D they are nearly always close to 90° apart, so thousands of concepts fit without interfering.</p><div class="eqcard">\[ \cos\theta=\frac{u\cdot v}{\lVert u\rVert\,\lVert v\rVert},\qquad \operatorname{std}(\cos\theta)\approx\frac{1}{\sqrt d} \]</div><div class="row"><label for="md">Dimension \(d\)</label><input id="md" type="range" min="0" max="10" step="1" value="3"><output id="mdO"></output></div><div class="row"><label for="mM">Directions \(M\)</label><input id="mM" type="range" min="5" max="400" step="5" value="100"><output id="mMO"></output></div><div class="btns"><button id="mNew" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Resample</span></button><button id="mReset">Reset</button></div><p class="bridge">This is why feature vectors are long, such as the 768 numbers of a ViT token: room for many nearly independent features. Now the catch.</p></section>
+
+<section class="rp" id="r-curse" hidden><span class="eyebrow">6 of 7 · The catch</span><h2>Raw high‑dimensional space is a trap</h2><p>In many dimensions, every point is about equally far from every other, and almost all the volume sits near the edges. "Nearest neighbour" stops meaning "most similar".</p><div class="eqcard">\[ \frac{d_{\max}-d_{\min}}{d_{\min}}\ \xrightarrow{\ d\to\infty\ }\ 0 \] \[ \text{volume within } 5\%\text{ of the surface}=1-0.9^{d} \]</div><div class="row"><label for="kd">Dimension \(d\)</label><input id="kd" type="range" min="0" max="10" step="1" value="1"><output id="kdO"></output></div><div class="btns"><button id="kSweep" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Sweep the dimension</span></button><button id="kReset">Reset</button></div><p class="note">400 random points in a unit cube of \(d\) dimensions; distances measured from one of them.</p><p class="bridge">So high dimensions help only if the dimensions are <b>meaningful</b>. Next: the same problem on real images, and the fix.</p></section>
+
+<section class="rp" id="r-feat" hidden><span class="eyebrow">7 of 7 · Features</span><h2>Good features beat raw dimensions</h2><p>Each 24×24 image is a point in 576‑D pixel space. Search for the images closest to a query, first by raw pixel distance, then by just two shape features.</p><div class="eqcard">\[ d_{\text{pix}}(a,b)=\lVert a-b\rVert,\quad a,b\in\mathbb{R}^{576} \] \[ f(a)=\big(\varphi_1,\ \text{extent}\big)\in\mathbb{R}^{2} \] \[ \varphi_1=\frac{\mu_{20}+\mu_{02}}{A^2} \] \[ \text{extent}=\frac{A}{\text{box area}} \]</div><p class="note"><b>Spread, Hu's first moment invariant \(\varphi_1\)</b>: how far the shape's area sits from its centre, divided by area² so it ignores position and size (\(\mu\): central moments, \(A\): area). <b>Fill, or extent</b>: how much of its bounding box the shape covers (circle ≈ 0.79, square ≈ 1, triangle ≈ 0.5).</p><div class="btns"><button id="fQuery" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Next query</span></button><button id="fNew">New images</button><button id="fReset">Reset</button></div><p class="note">The orange dots on every result mark where the <b>query</b> shape sits. Wrong‑shape matches by pixels sit right on top of it: same place, different shape. The correct shapes are shifted, so pixel distance calls them far.</p><p class="bridge">Raw pixel distance measures <i>where</i> things are, not <i>what</i> they are. A trained feature extractor learns a space where distance means similarity: real data lives on a <b>low‑dimensional manifold</b> inside its raw space. Bahri et al. (2021) link this to scaling laws: loss falls roughly as \(N^{-4/d}\), where \(d\) is the data's intrinsic dimension.</p></section>
+
+</div><div class="railnav"><button id="prev">← Previous</button><span class="keys">1–7 chapters · Space play</span><button id="next" class="primary">Next →</button></div></aside><section class="stage"><div class="vtabs" role="tablist" aria-label="Chapters"><button role="tab" class="vtab" data-v="tang"><kbd>1</kbd>Tangled</button><button role="tab" class="vtab" data-v="lift"><kbd>2</kbd>Lift</button><button role="tab" class="vtab" data-v="wide"><kbd>3</kbd>Width</button><button role="tab" class="vtab" data-v="cover"><kbd>4</kbd>Capacity</button><button role="tab" class="vtab" data-v="room"><kbd>5</kbd>Room</button><button role="tab" class="vtab" data-v="curse"><kbd>6</kbd>The Catch</button><button role="tab" class="vtab" data-v="feat"><kbd>7</kbd>Features</button></div><div class="views">
+
+<section class="view" id="v-tang" role="tabpanel"><div class="pair"><div class="panel"><div class="ph"><h2>Data points in feature space \((x_1,x_2)\)</h2><span class="cap">drag the handles</span></div><div class="key"><span><i class="dot" style="background:var(--q)"></i>class A</span><span><i class="dot" style="background:var(--k)"></i>class B</span><span>tinted side: predicted A</span></div><div class="cv"><canvas id="cvT1" aria-label="Data points with a movable line"></canvas></div></div><div class="panel"><div class="ph"><h2>Decision regions</h2><span class="cap">the line's prediction at every point of the plane</span></div><div class="key"><span><i class="dot" style="background:var(--q)"></i>A, correct</span><span><i class="dot" style="background:var(--sunk);border:1px solid var(--line)"></i>B, correct</span><span><i class="dot" style="background:var(--dk)"></i>wrong</span></div><div class="cv"><canvas id="cvT2" aria-label="Decision regions of the line"></canvas></div></div></div><div class="eqstrip" id="tEq"></div></section>
+
+<section class="view" id="v-lift" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2>Lifted to 3‑D</h2><span class="cap">drag to rotate · purple: the plane</span></div><div class="cv"><canvas id="cvL1" aria-label="Points lifted into three dimensions with a separating plane"></canvas></div></div><div class="panel"><div class="ph"><h2>The same plane, back in 2‑D</h2><span class="cap">a flat cut in 3‑D is a curve in 2‑D</span></div><div class="key"><span><i class="dot" style="background:var(--q)"></i>A, correct</span><span><i class="dot" style="background:var(--sunk);border:1px solid var(--line)"></i>B, correct</span><span><i class="dot" style="background:var(--dk)"></i>wrong</span></div><div class="cv"><canvas id="cvL2" aria-label="Decision regions of the plane"></canvas></div></div></div><div class="eqstrip" id="lEq"></div></section>
+
+<section class="view" id="v-wide" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2>Decision of a linear readout on \(D\) random units</h2><span class="cap">colour: \(f(x)\) · line: \(f=0\)</span></div><div class="cv"><canvas id="cvW1" aria-label="Decision map of the random-feature classifier"></canvas></div></div><div class="stack" style="grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)"><div class="panel"><div class="ph"><h2>Accuracy vs width</h2><span class="cap">same random units, nested: the first \(D\)</span></div><div class="key"><span><i class="sw" style="border-color:var(--muted)"></i>train</span><span><i class="sw" style="border-color:var(--sc)"></i>test (new points)</span></div><div class="cv"><canvas id="cvW2" aria-label="Accuracy as a function of width"></canvas></div></div><div class="panel"><div class="ph"><h2>Some of the random units</h2><span class="cap">each one is a ramp: \(\max(0,u\cdot x-c)\)</span></div><div class="cv"><canvas id="cvW3" aria-label="Individual random ReLU features"></canvas></div></div></div></div><div class="eqstrip" id="wEq"></div></section>
+
+<section class="view" id="v-cover" role="tabpanel" hidden><div class="pair wl" style="grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)"><div class="panel"><div class="ph"><h2>Chance that random labels are linearly separable</h2><span class="cap">x‑axis: points per parameter, \(N/(d+1)\)</span></div><div class="key"><span><i class="sw" style="border-color:var(--muted)"></i>theory, other \(d\)</span><span><i class="sw" style="border-color:var(--sc)"></i>theory, chosen \(d\)</span><span><i class="dot" style="background:var(--q)"></i>trials</span></div><div class="cv"><canvas id="cvC1" aria-label="Probability of linear separability against points per parameter"></canvas></div></div><div class="panel"><div class="ph"><h2 id="cT2"></h2><span class="cap">✓ a line exists · ✗ none does</span></div><div class="cv"><canvas id="cvC2" aria-label="All labelings of a few points in 2-D"></canvas></div></div></div><div class="eqstrip" id="cEq"></div></section>
+
+<section class="view" id="v-room" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2>Angle between two random directions</h2><span class="cap">4,000 random pairs</span></div><div class="cv"><canvas id="cvM1" aria-label="Histogram of angles between random directions"></canvas></div></div><div class="panel"><div class="ph"><h2>Worst overlap among \(M\) random directions</h2><span class="cap">largest deviation from 90° over all pairs</span></div><div class="cv"><canvas id="cvM2" aria-label="Worst angle deviation as more directions are added"></canvas></div></div></div><div class="eqstrip" id="mEq"></div></section>
+
+<section class="view" id="v-curse" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2>Distances from one point to 400 others</h2><span class="cap">relative to the mean distance · uniform in \([0,1]^d\)</span></div><div class="cv"><canvas id="cvK1" aria-label="Histogram of relative distances"></canvas></div></div><div class="panel"><div class="ph"><h2>Nearest vs farthest, as \(d\) grows</h2><span class="cap">relative contrast \((d_{\max}-d_{\min})/d_{\min}\), log scale</span></div><div class="cv"><canvas id="cvK2" aria-label="Relative contrast against dimension"></canvas></div></div></div><div class="eqstrip" id="kEq"></div></section>
+
+<section class="view" id="v-feat" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2>Find the images most similar to the query</h2><span class="cap">orange dots: where the query shape sits</span></div><div class="key"><span><i class="dot" style="background:var(--v)"></i>✓ same shape as the query</span><span><i class="dot" style="background:var(--dk)"></i>✗ different shape</span></div><div class="cv"><canvas id="cvF1" aria-label="Nearest images by raw pixels versus shape features"></canvas></div></div><div class="panel"><div class="ph"><h2>Distance from the query to every other image</h2><span class="cap">one dot per image · ringed: the top 5</span></div><div class="key"><span><i class="dot" style="background:var(--v)"></i>same shape</span><span><i class="dot" style="background:var(--dk)"></i>other shapes</span></div><div class="cv"><canvas id="cvF2" aria-label="Distances from the query in pixel space and in feature space"></canvas></div></div></div><div class="eqstrip" id="fEq"></div></section>
+
+</div></section></div></div>
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},svg:{fontCache:"global"},options:{enableMenu:!1},startup:{typeset:!1,ready(){MathJax.startup.defaultReady(),MathJax.startup.promise.then(()=>{window.__mjReady&&window.__mjReady()})}}};</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async></script><script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const RM = matchMedia("(prefers-reduced-motion: reduce)");
+const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
+const BODY = '"IBM Plex Sans", system-ui, -apple-system, sans-serif';
+const C = {};
+let FS = 12, themeV = 0;
+
+// ---------- utilities ----------
+function readTheme() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const n of ["bg", "surface", "sunk", "ink", "muted", "line", "grid", "q", "k", "v", "sc", "neg", "dk"])
+    C[n] = cs.getPropertyValue("--" + n).trim() || "#888888";
+  FS = Math.round(12 * (parseFloat(cs.fontSize) || 15) / 15 * 10) / 10;
+  themeV++;
+}
+const hex = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
+const rgba = (h, a) => { const [r, g, b] = hex(h); return `rgba(${r},${g},${b},${a})`; };
+const css = a => `rgb(${a[0]},${a[1]},${a[2]})`;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const now = () => performance.now();
+const fmt = (x, p = 2) => isFinite(x) ? (x < 0 && Math.abs(x) >= .5 * Math.pow(10, -p) ? "−" : "") + Math.abs(x).toFixed(p) : "—";
+const tf = (x, p = 2) => (x < 0 && Math.abs(x) >= .5 * Math.pow(10, -p) ? "-" : "") + Math.abs(x).toFixed(p);
+const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0);
+const norm = a => Math.sqrt(dot(a, a));
+function num(v) {
+  const a = Math.abs(v);
+  if (a < 1e-9) return "0";
+  return (a >= 10 ? v.toFixed(0) : a >= 1 ? v.toFixed(1).replace(/\.0$/, "") : v.toFixed(2).replace(/0$/, "")).replace("-", "−");
+}
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+function gauss(r) { let u = 0; while (u === 0) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+function softmax(a) {
+  const m = Math.max(...a.filter(isFinite));
+  const e = a.map(x => isFinite(x) ? Math.exp(x - m) : 0), s = e.reduce((p, x) => p + x, 0);
+  return e.map(x => x / s);
+}
+function divRGB(v) {
+  v = clamp(v, -1, 1);
+  const z = hex(C.surface), e = hex(v < 0 ? C.k : C.q), t = Math.pow(Math.abs(v), .85);
+  return z.map((c, i) => Math.round(c + (e[i] - c) * t));
+}
+const VIR = [[68,1,84],[71,44,122],[59,81,139],[44,113,142],[33,144,141],[39,173,129],[92,200,99],[170,220,50],[253,231,37]];
+function virRGB(t) {
+  t = clamp(t, 0, 1) * (VIR.length - 1);
+  const i = Math.min(VIR.length - 2, Math.floor(t)), f = t - i;
+  return VIR[i].map((c, j) => Math.round(c + (VIR[i + 1][j] - c) * f));
+}
+function setText(id, s) { const e = $(id); if (e && e.textContent !== s) e.textContent = s; }
+
+// ---------- canvas ----------
+function fit(cv) {
+  const r = cv.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+  const W = Math.max(1, Math.round(r.width * d)), H = Math.max(1, Math.round(r.height * d));
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+  ctx.clearRect(0, 0, r.width, r.height);
+  return { ctx, w: r.width, h: r.height };
+}
+function text(ctx, s, x, y, color, align = "left", base = "alphabetic", size = FS, weight = 500, font = MONO) {
+  ctx.font = `${weight} ${size}px ${font}`; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = base; ctx.fillText(s, x, y);
+}
+function line(ctx, x1, y1, x2, y2, color, w = 1, dash = null) {
+  ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]);
+}
+function arrow(ctx, x1, y1, x2, y2, color, w) {
+  const a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1), hd = Math.min(14, .45 * L);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(a) * hd * .7, y2 - Math.sin(a) * hd * .7); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - hd * Math.cos(a - .42), y2 - hd * Math.sin(a - .42));
+  ctx.lineTo(x2 - hd * Math.cos(a + .42), y2 - hd * Math.sin(a + .42));
+  ctx.closePath(); ctx.fill(); ctx.lineCap = "butt";
+}
+function polyline(ctx, pts, color, w = 2, dash = null) {
+  if (!pts.length) return;
+  ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.lineJoin = "round";
+  ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke(); ctx.setLineDash([]);
+}
+function hatch(ctx, x, y, w, h) {
+  if (w <= 0 || h <= 0) return;
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+  ctx.fillStyle = C.sunk; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.beginPath();
+  for (let s = -h; s < w; s += 8) { ctx.moveTo(x + s, y + h); ctx.lineTo(x + s + h, y); }
+  ctx.stroke(); ctx.restore();
+}
+function niceTicks(lo, hi, n = 5) {
+  const span = hi - lo; if (span <= 0) return [lo];
+  const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(x => x * p).find(x => x >= raw) || 10 * p;
+  const out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(Math.round(v * 1e6) / 1e6);
+  return out;
+}
+function frame(ctx, box, xr, yr, o = {}) {
+  const X = v => box.x + (v - xr[0]) / (xr[1] - xr[0]) * box.w;
+  const Y = v => box.y + box.h - (v - yr[0]) / (yr[1] - yr[0]) * box.h;
+  for (const v of (o.yt || niceTicks(yr[0], yr[1], o.ny || 4))) {
+    line(ctx, box.x, Y(v), box.x + box.w, Y(v), C.grid, 1);
+    text(ctx, num(v), box.x - 6, Y(v), C.muted, "right", "middle", FS * .9);
+  }
+  for (const v of (o.xt || niceTicks(xr[0], xr[1], o.nx || 6))) {
+    line(ctx, X(v), box.y + box.h, X(v), box.y + box.h + 4, C.line, 1);
+    text(ctx, num(v), X(v), box.y + box.h + 6, C.muted, "center", "top", FS * .9);
+  }
+  line(ctx, box.x, box.y + box.h, box.x + box.w, box.y + box.h, C.line, 1);
+  if (yr[0] < 0 && yr[1] > 0) line(ctx, box.x, Y(0), box.x + box.w, Y(0), C.muted, 1);
+  if (o.xl) text(ctx, o.xl, box.x + box.w, box.y + box.h + FS * 2.2, C.muted, "right", "top", FS * .9, 500, BODY);
+  if (o.yl) text(ctx, o.yl, box.x - FS * 2.6, box.y - FS * .7, C.muted, "left", "bottom", FS * .9, 500, BODY);
+  return { X, Y };
+}
+const stdBox = (w, h, l = 3.4, r = 1.2, t = 1.8, b = 3.4) => ({ x: FS * l, y: FS * t, w: Math.max(10, w - FS * (l + r)), h: Math.max(10, h - FS * (t + b)) });
+const heatCache = new Map();
+function heatImg(key, cols, rows, fn) {
+  const k = key + "|" + themeV;
+  let c = heatCache.get(k);
+  if (c) return c;
+  c = document.createElement("canvas"); c.width = cols; c.height = rows;
+  const x = c.getContext("2d"), im = x.createImageData(cols, rows);
+  for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) {
+    const v = fn(r, q), i = 4 * (r * cols + q);
+    if (v) { im.data[i] = v[0]; im.data[i + 1] = v[1]; im.data[i + 2] = v[2]; im.data[i + 3] = 255; }
+  }
+  x.putImageData(im, 0, 0);
+  if (heatCache.size > 80) heatCache.clear();
+  heatCache.set(k, c);
+  return c;
+}
+function drawImg(ctx, img, x, y, w, h, smooth = false) { ctx.imageSmoothingEnabled = smooth; ctx.drawImage(img, x, y, w, h); ctx.imageSmoothingEnabled = true; }
+function localXY(cv, e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+
+// ---------- MathJax ----------
+const TX = { ready: false, chain: Promise.resolve(), pend: new Map(), timer: 0 };
+function typeset(els) {
+  if (!TX.ready) return;
+  els = els.filter(e => e && e.offsetParent !== null);
+  if (!els.length) return;
+  TX.chain = TX.chain.then(() => { MathJax.typesetClear(els); return MathJax.typesetPromise(els); }).catch(() => {});
+}
+function setTex(el, src, lazy) {
+  if (!el) return;
+  if (lazy) {
+    // always queue: an older pending value must never win over the latest one
+    TX.pend.set(el, src);
+    if (!TX.timer) TX.timer = setTimeout(() => { TX.timer = 0; const p = [...TX.pend]; TX.pend.clear(); for (const [e, s] of p) setTex(e, s); }, 90);
+    return;
+  }
+  TX.pend.delete(el);
+  if (el._src === src) return;
+  el._src = src; el.innerHTML = src; typeset([el]);
+}
+function typesetVisible() {
+  if (!TX.ready) return;
+  const els = [document.querySelector(".rp:not([hidden])"), document.querySelector(".view:not([hidden])")].filter(Boolean);
+  TX.chain = TX.chain.then(() => MathJax.typesetPromise(els)).catch(() => {});
+}
+window.__mjReady = () => { if (!TX.ready) { TX.ready = true; typesetVisible(); } };
+
+
+const pct = x => (100 * x).toFixed(1) + "%";
+function outline(ctx, x, y, w, h, col = "#15202c") {
+  ctx.lineWidth = 4; ctx.strokeStyle = "#ffffff"; ctx.strokeRect(x, y, w, h);
+  ctx.lineWidth = 2; ctx.strokeStyle = col; ctx.strokeRect(x, y, w, h);
+}
+function cholSolve(A, b, n) {
+  const L = new Float64Array(n * n);
+  for (let i = 0; i < n; i++) for (let j = 0; j <= i; j++) {
+    let s = A[i * n + j];
+    for (let k = 0; k < j; k++) s -= L[i * n + k] * L[j * n + k];
+    L[i * n + j] = i === j ? Math.sqrt(Math.max(s, 1e-12)) : s / L[j * n + j];
+  }
+  const y = new Float64Array(n), x = new Float64Array(n);
+  for (let i = 0; i < n; i++) { let s = b[i]; for (let k = 0; k < i; k++) s -= L[i * n + k] * y[k]; y[i] = s / L[i * n + i]; }
+  for (let i = n - 1; i >= 0; i--) { let s = y[i]; for (let k = i + 1; k < n; k++) s -= L[k * n + i] * x[k]; x[i] = s / L[i * n + i]; }
+  return x;
+}
+
+// =====================================================================
+// shared data: pixels of an "object", as points in [-1, 1]^2
+// =====================================================================
+const DS = { name: "disk", train: [], test: [], truth: null, G: 96 };
+function dsLabel(name, x, y) {
+  const r = Math.hypot(x, y);
+  if (name === "disk") return r < .55 ? 1 : -1;
+  if (name === "ring") return r > .32 && r < .68 ? 1 : -1;
+  if (name === "xor") return x * y > 0 ? 1 : -1;
+  return 0;
+}
+function dsSample(name, n, seed) {
+  const r = rng(seed), out = [];
+  if (name === "spiral") {
+    for (let i = 0; i < n; i++) {
+      const lab = i % 2 ? 1 : -1, t = .12 + .88 * r(), a = 3.4 * Math.PI * t + (lab > 0 ? 0 : Math.PI);
+      out.push([t * .95 * Math.cos(a) + .035 * gauss(r), t * .95 * Math.sin(a) + .035 * gauss(r), lab]);
+    }
+    return out;
+  }
+  for (let i = 0; i < n; i++) { const x = 2 * r() - 1, y = 2 * r() - 1; out.push([x, y, dsLabel(name, x, y)]); }
+  return out;
+}
+function dsBuild(name) {
+  DS.name = name;
+  DS.train = dsSample(name, 400, 7);
+  DS.test = dsSample(name, 400, 99);
+  const G = DS.G; DS.truth = new Int8Array(G * G);
+  for (let gy = 0; gy < G; gy++) for (let gx = 0; gx < G; gx++) {
+    const x = -1 + 2 * (gx + .5) / G, y = 1 - 2 * (gy + .5) / G;
+    let lab = dsLabel(name, x, y);
+    if (name === "spiral") {
+      let best = 1e9;
+      for (const p of DS.train) { const d = (p[0] - x) ** 2 + (p[1] - y) ** 2; if (d < best) { best = d; lab = p[2]; } }
+    }
+    DS.truth[gy * G + gx] = lab;
+  }
+  for (const n of ["ds", "ds2", "ds3"]) { const el = document.querySelector(`input[name=${n}][value=${name}]`); if (el) el.checked = true; }
+}
+const accOf = (pts, f) => pts.reduce((s, p) => s + ((f(p[0], p[1]) > 0 ? 1 : -1) === p[2] ? 1 : 0), 0) / pts.length;
+// draws the decision regions: correct A, correct B, or wrong
+function drawSeg(ctx, key, x0, y0, S, f) {
+  const G = DS.G, cq = hex(C.q), cb = hex(C.sunk), cn = hex(C.dk);
+  const img = heatImg(`seg|${DS.name}|${key}`, G, G, (gy, gx) => {
+    const x = -1 + 2 * (gx + .5) / G, y = 1 - 2 * (gy + .5) / G, p = f(x, y) > 0 ? 1 : -1, t = DS.truth[gy * G + gx];
+    return p !== t ? cn : t > 0 ? cq : cb;
+  });
+  drawImg(ctx, img, x0, y0, S, S);
+  ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.strokeRect(x0, y0, S, S);
+}
+function squareBox(w, h, pad = FS * .8) { const S = Math.max(40, Math.min(w, h) - 2 * pad); return { x0: (w - S) / 2, y0: (h - S) / 2, S }; }
+function drawPoints(ctx, pts, P, r = 2.6) {
+  for (const [x, y, l] of pts) { ctx.fillStyle = l > 0 ? C.q : C.k; ctx.beginPath(); ctx.arc(...P(x, y), r, 0, 7); ctx.fill(); }
+}
+
+// =====================================================================
+// 1. Tangled: the best straight line
+// =====================================================================
+const TG = { h1: [-.9, -.35], h2: [.9, .45], side: 1, drag: null, anim: null, geo: null };
+const TG0 = { h1: [-.9, -.35], h2: [.9, .45] };
+function tgRaw(h1, h2) { // signed distance-like value for a line through h1, h2
+  const nx = -(h2[1] - h1[1]), ny = h2[0] - h1[0], L = Math.hypot(nx, ny) || 1;
+  return (x, y) => ((x - h1[0]) * nx + (y - h1[1]) * ny) / L;
+}
+function tgHandles() {
+  if (!TG.anim) return [TG.h1, TG.h2];
+  const t = ease(clamp((now() - TG.anim.t0) / 600, 0, 1));
+  if (t >= 1) { TG.anim = null; return [TG.h1, TG.h2]; }
+  return [0, 1].map(k => [0, 1].map(i => lerp(TG.anim.from[k][i], [TG.h1, TG.h2][k][i], t)));
+}
+function tgFn() { const [a, b] = tgHandles(), g = tgRaw(a, b); return (x, y) => TG.side * g(x, y); }
+function tgPickSide() {
+  const g = tgRaw(TG.h1, TG.h2);
+  TG.side = accOf(DS.train, g) >= accOf(DS.train, (x, y) => -g(x, y)) ? 1 : -1;
+}
+function tgBest() {
+  let best = -1, bestL = null;
+  for (let ai = 0; ai < 90; ai++) {
+    const a = ai / 90 * Math.PI, nx = Math.cos(a), ny = Math.sin(a);
+    for (let ci = -50; ci <= 50; ci++) for (const s of [1, -1]) {
+      const c = ci / 50; let ok = 0; for (const [x, y, l] of DS.train) if (((x * nx + y * ny - c) * s > 0 ? 1 : -1) === l) ok++;
+      if (ok > best) { best = ok; bestL = [nx, ny, c]; }
+    }
+  }
+  const [nx, ny, c] = bestL, px = nx * c, py = ny * c, tx = -ny, ty = nx;
+  // place both handles on the part of the line that lies inside the image
+  let t0 = -3, t1 = 3;
+  for (const [p, d] of [[px, tx], [py, ty]]) if (Math.abs(d) > 1e-9) { const a = (-1 - p) / d, b = (1 - p) / d; t0 = Math.max(t0, Math.min(a, b)); t1 = Math.min(t1, Math.max(a, b)); }
+  const from = [TG.h1.slice(), TG.h2.slice()], ta = lerp(t0, t1, .15), tb = lerp(t0, t1, .85);
+  TG.h1 = [px + tx * ta, py + ty * ta]; TG.h2 = [px + tx * tb, py + ty * tb];
+  tgPickSide();
+  TG.anim = RM.matches ? null : { t0: now(), from };
+  tgUpdate();
+}
+function tgUpdate() {
+  const f = (x, y) => TG.side * tgRaw(TG.h1, TG.h2)(x, y);
+  const acc = accOf(DS.train, f), base = DS.train.filter(p => p[2] < 0).length / DS.train.length;
+  setText("tAcc", pct(acc)); setText("tBase", pct(base));
+  setTex($("tEq"), `\\(\\text{line accuracy}=\\class{ss}{\\mathbf{${(100 * acc).toFixed(1)}\\%}}\\qquad \\text{always predicting the majority class}=${(100 * base).toFixed(1)}\\%\\qquad \\text{gain from the line}=${(100 * (acc - base)).toFixed(1)}\\ \\text{points}\\)`, true);
+}
+function drawTg() {
+  const f = tgFn(), [a, b] = tgHandles();
+  {
+    const { ctx, w, h } = fit($("cvT1")), { x0, y0, S } = squareBox(w, h);
+    const P = (x, y) => [x0 + (x + 1) / 2 * S, y0 + (1 - y) / 2 * S];
+    TG.geo = { x0, y0, S };
+    // tint the predicted-object half plane
+    ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, S, S); ctx.clip();
+    ctx.fillStyle = C.sunk; ctx.fillRect(x0, y0, S, S);
+    const dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+    const far = 4, nx = -uy, ny = ux, s = TG.side;
+    ctx.fillStyle = rgba(C.q, .16); ctx.beginPath();
+    ctx.moveTo(...P(a[0] - ux * far, a[1] - uy * far)); ctx.lineTo(...P(a[0] + ux * far, a[1] + uy * far));
+    ctx.lineTo(...P(a[0] + ux * far + s * nx * far, a[1] + uy * far + s * ny * far)); ctx.lineTo(...P(a[0] - ux * far + s * nx * far, a[1] - uy * far + s * ny * far)); ctx.fill();
+    drawPoints(ctx, DS.train, P);
+    line(ctx, ...P(a[0] - ux * far, a[1] - uy * far), ...P(a[0] + ux * far, a[1] + uy * far), C.ink, 2.5);
+    ctx.restore();
+    ctx.strokeStyle = C.line; ctx.strokeRect(x0, y0, S, S);
+    for (const hd of [a, b]) {
+      const [px, py] = P(...hd);
+      ctx.fillStyle = C.surface; ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(px, py, 8, 0, 7); ctx.fill(); ctx.stroke();
+    }
+  }
+  {
+    const { ctx, w, h } = fit($("cvT2")), { x0, y0, S } = squareBox(w, h);
+    const key = TG.anim ? "anim" + now() : [TG.h1, TG.h2, TG.side].join();
+    drawSeg(ctx, key, x0, y0, S, f);
+  }
+}
+function tgPointer(e) {
+  const g = TG.geo, [px, py] = localXY(e.currentTarget, e);
+  return [clamp((px - g.x0) / g.S * 2 - 1, -1.15, 1.15), clamp(1 - (py - g.y0) / g.S * 2, -1.15, 1.15), g];
+}
+
+// =====================================================================
+// 2. Lift: one extra feature
+// =====================================================================
+const LF = { lift: "r2", h: .15, w: null, yaw: .6, pitch: .45, drag: null };
+const lfZ = (x, y) => LF.lift === "r2" ? x * x + y * y : x * y;
+const lfRange = () => LF.lift === "r2" ? [0, 2] : [-1, 1];
+function lfFn() {
+  if (LF.w) { const [a, b, c, d] = LF.w; return (x, y) => a * x + b * y + c * lfZ(x, y) + d; }
+  const [lo, hi] = lfRange(), hz = lo + LF.h * (hi - lo);
+  const below = accOf(DS.train, (x, y) => hz - lfZ(x, y)) >= accOf(DS.train, (x, y) => lfZ(x, y) - hz);
+  return below ? (x, y) => hz - lfZ(x, y) : (x, y) => lfZ(x, y) - hz;
+}
+function lfBest() {
+  const pts = DS.train.map(([x, y, l]) => [x, y, lfZ(x, y), l]);
+  let w = [0, 0, 0, 0];
+  for (let it = 0; it < 1500; it++) {
+    const g = [0, 0, 0, 0];
+    for (const [x, y, z, l] of pts) {
+      const m = l * (w[0] * x + w[1] * y + w[2] * z + w[3]), s = -l / (1 + Math.exp(m));
+      g[0] += s * x; g[1] += s * y; g[2] += s * z; g[3] += s;
+    }
+    for (let k = 0; k < 4; k++) w[k] -= 2 * g[k] / pts.length;
+  }
+  LF.w = w;
+  if (Math.abs(w[2]) > 1e-6) { const [lo, hi] = lfRange(); LF.h = clamp((-w[3] / w[2] - lo) / (hi - lo), 0, 1); $("lH").value = LF.h; }
+  lfUpdate();
+}
+let tgBestAcc = null;
+function lineBestAcc() {
+  if (tgBestAcc && tgBestAcc.name === DS.name) return tgBestAcc.acc;
+  let best = 0;
+  for (let ai = 0; ai < 60; ai++) {
+    const a = ai / 60 * Math.PI, nx = Math.cos(a), ny = Math.sin(a);
+    for (let c = -1.05; c <= 1.05; c += .03) for (const s of [1, -1]) best = Math.max(best, accOf(DS.train, (x, y) => (x * nx + y * ny - c) * s));
+  }
+  tgBestAcc = { name: DS.name, acc: best };
+  return best;
+}
+function lfUpdate() {
+  const f = lfFn(), acc = accOf(DS.train, f), [lo, hi] = lfRange();
+  setText("lHO", (lo + LF.h * (hi - lo)).toFixed(2) + (LF.w ? " (fit)" : ""));
+  setText("lAcc", pct(acc)); setText("lLine", pct(lineBestAcc()));
+  const zt = LF.lift === "r2" ? "x_1^2+x_2^2" : "x_1x_2";
+  setTex($("lEq"), LF.w
+    ? `\\(\\text{best plane: } ${tf(LF.w[0])}\\,x_1 ${LF.w[1] < 0 ? "" : "+"}${tf(LF.w[1])}\\,x_2 ${LF.w[2] < 0 ? "" : "+"}${tf(LF.w[2])}\\,(${zt}) ${LF.w[3] < 0 ? "" : "+"}${tf(LF.w[3])}=0\\qquad \\text{accuracy}=\\class{ss}{\\mathbf{${(100 * acc).toFixed(1)}\\%}}\\)`
+    : `\\(\\text{plane } z=${tf(lo + LF.h * (hi - lo))}\\ \\Rightarrow\\ ${zt}=${tf(lo + LF.h * (hi - lo))}\\qquad \\text{accuracy}=\\class{ss}{\\mathbf{${(100 * acc).toFixed(1)}\\%}}\\)`, true);
+}
+function drawLf() {
+  const f = lfFn(), [lo, hi] = lfRange();
+  {
+    const { ctx, w, h } = fit($("cvL1")), sc = Math.min(w, h) * .3, cx = w / 2, cy = h / 2 + sc * .1;
+    const cyw = Math.cos(LF.yaw), syw = Math.sin(LF.yaw), cp = Math.cos(LF.pitch), sp = Math.sin(LF.pitch);
+    const zd = z => (z - lo) / (hi - lo) * 1.6 - .8;
+    const proj = (x, y, z) => { const X = x * cyw - y * syw, Y = x * syw + y * cyw, Z = zd(z); return [cx + X * sc, cy - (Z * cp + Y * sp) * sc, -Y * cp + Z * sp]; };
+    // floor square and axes
+    const fl = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([x, y]) => proj(x, y, lo));
+    ctx.fillStyle = rgba(C.muted, .08); ctx.strokeStyle = C.line; ctx.lineWidth = 1;
+    ctx.beginPath(); fl.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.fill(); ctx.stroke();
+    const zA = proj(-1, -1, lo), zB = proj(-1, -1, hi);
+    line(ctx, zA[0], zA[1], zB[0], zB[1], C.muted, 1.2);
+    text(ctx, LF.lift === "r2" ? "z = x₁²+x₂²" : "z = x₁·x₂", zB[0] - 6, zB[1] - 4, C.muted, "right", "bottom", FS * .9);
+    // plane
+    let planeZ;
+    if (LF.w) { const [a, b, c, d] = LF.w; planeZ = Math.abs(c) > 1e-4 ? (x, y) => -(a * x + b * y + d) / c : null; }
+    else { const hz = lo + LF.h * (hi - lo); planeZ = () => hz; }
+    const pts = DS.train.map(([x, y, l]) => { const z = lfZ(x, y); const [px, py, dz] = proj(x, y, z); return { px, py, dz, l, above: planeZ ? z > planeZ(x, y) : false }; });
+    const drawPlane = () => {
+      if (!planeZ) return;
+      const cs = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([x, y]) => proj(x, y, clamp(planeZ(x, y), lo - .3 * (hi - lo), hi + .3 * (hi - lo))));
+      ctx.fillStyle = rgba(C.sc, .22); ctx.strokeStyle = C.sc; ctx.lineWidth = 1.5;
+      ctx.beginPath(); cs.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.fill(); ctx.stroke();
+    };
+    // points below the plane first, then the plane, then points above it
+    pts.sort((p, q) => p.dz - q.dz);
+    for (const p of pts) if (!p.above) { ctx.fillStyle = p.l > 0 ? C.q : C.k; ctx.beginPath(); ctx.arc(p.px, p.py, 2.6, 0, 7); ctx.fill(); }
+    drawPlane();
+    for (const p of pts) if (p.above) { ctx.fillStyle = p.l > 0 ? C.q : C.k; ctx.beginPath(); ctx.arc(p.px, p.py, 2.6, 0, 7); ctx.fill(); }
+  }
+  {
+    const { ctx, w, h } = fit($("cvL2")), { x0, y0, S } = squareBox(w, h);
+    drawSeg(ctx, `lf|${LF.lift}|${LF.h}|${LF.w ? LF.w.join() : ""}`, x0, y0, S, f);
+  }
+}
+
+// =====================================================================
+// 3. Width: random ReLU features + linear readout
+// =====================================================================
+const WD = { k: 3, seed: 1, U: [], fits: {}, curve: null, sweep: null, lam: 1e-3 };
+const wdD = k => Math.pow(2, k);
+function wdUnits() {
+  const r = rng(WD.seed * 7919 + 3);
+  WD.U = Array.from({ length: 512 }, () => { const a = r() * 2 * Math.PI; return [Math.cos(a), Math.sin(a), (2 * r() - 1) * 1.15]; });
+  WD.fits = {}; WD.curve = null;
+}
+const wdPhi = (x, y, D) => { const o = new Float64Array(D + 1); for (let j = 0; j < D; j++) { const [ux, uy, c] = WD.U[j]; o[j] = Math.max(0, ux * x + uy * y - c); } o[D] = 1; return o; };
+function wdFit(D) {
+  const key = DS.name + "|" + D;
+  if (WD.fits[key]) return WD.fits[key];
+  const n = D + 1, A = new Float64Array(n * n), b = new Float64Array(n);
+  for (const [x, y, l] of DS.train) {
+    const p = wdPhi(x, y, D);
+    for (let i = 0; i < n; i++) { if (!p[i]) continue; b[i] += p[i] * l; for (let j = 0; j <= i; j++) A[i * n + j] += p[i] * p[j]; }
+  }
+  for (let i = 0; i < n; i++) { for (let j = 0; j < i; j++) A[j * n + i] = A[i * n + j]; A[i * n + i] += WD.lam * DS.train.length; }
+  const w = cholSolve(A, b, n);
+  const f = (x, y) => { const p = wdPhi(x, y, D); let s = 0; for (let i = 0; i < n; i++) s += w[i] * p[i]; return s; };
+  const fitted = { f, tr: accOf(DS.train, f), te: accOf(DS.test, f) };
+  WD.fits[key] = fitted;
+  return fitted;
+}
+function wdCurve() {
+  if (WD.curve && WD.curve.name === DS.name) return WD.curve.pts;
+  const pts = []; for (let k = 0; k <= 9; k++) { const F = wdFit(wdD(k)); pts.push([k, F.tr, F.te]); }
+  WD.curve = { name: DS.name, pts };
+  return pts;
+}
+function wdUpdate() {
+  $("wD").value = WD.k;
+  const D = wdD(WD.k), F = wdFit(D);
+  setText("wDO", D + (D === 1 ? " unit" : " units"));
+  setText("wTr", pct(F.tr)); setText("wTe", pct(F.te));
+  setTex($("wEq"), `\\(D=${D}\\ \\text{random units}\\ \\to\\ \\text{fit }${D + 1}\\ \\text{readout weights}:\\quad \\text{train}=${(100 * F.tr).toFixed(1)}\\%,\\ \\ \\text{test}=\\class{ss}{\\mathbf{${(100 * F.te).toFixed(1)}\\%}}\\qquad \\text{best single line}=${(100 * lineBestAcc()).toFixed(1)}\\%\\)`, true);
+}
+function drawWd() {
+  if (WD.sweep) {
+    const k = Math.min(9, Math.floor((now() - WD.sweep) / 700));
+    if (k !== WD.k) { WD.k = k; wdUpdate(); }
+    if (k >= 9) { WD.sweep = null; wdBtn(); }
+  }
+  const D = wdD(WD.k), F = wdFit(D);
+  {
+    const { ctx, w, h } = fit($("cvW1")), { x0, y0, S } = squareBox(w, h), G = 90;
+    const img = heatImg(`wd|${DS.name}|${WD.seed}|${D}`, G, G, (gy, gx) => divRGB(clamp(F.f(-1 + 2 * (gx + .5) / G, 1 - 2 * (gy + .5) / G), -1, 1) * .7));
+    drawImg(ctx, img, x0, y0, S, S, true);
+    const P = (x, y) => [x0 + (x + 1) / 2 * S, y0 + (1 - y) / 2 * S];
+    // boundary f = 0: grid cells whose sign differs from a neighbour, computed once per fit
+    if (!F.edge) {
+      const B = 140, sg = new Int8Array(B * B); F.edge = [];
+      for (let gy = 0; gy < B; gy++) for (let gx = 0; gx < B; gx++) sg[gy * B + gx] = F.f(-1 + 2 * (gx + .5) / B, 1 - 2 * (gy + .5) / B) > 0 ? 1 : 0;
+      for (let gy = 0; gy < B; gy++) for (let gx = 0; gx < B; gx++) {
+        const s0 = sg[gy * B + gx];
+        if ((gx + 1 < B && sg[gy * B + gx + 1] !== s0) || (gy + 1 < B && sg[(gy + 1) * B + gx] !== s0)) F.edge.push([-1 + 2 * (gx + 1) / B, 1 - 2 * (gy + 1) / B]);
+      }
+    }
+    ctx.fillStyle = C.ink;
+    for (const [x, y] of F.edge) { const [px, py] = P(x, y); ctx.fillRect(px - 1.2, py - 1.2, 2.4, 2.4); }
+    drawPoints(ctx, DS.train, P, 2.2);
+    ctx.strokeStyle = C.line; ctx.strokeRect(x0, y0, S, S);
+  }
+  {
+    const { ctx, w, h } = fit($("cvW2")), box = stdBox(w, h, 3.4, 1.2, 1.2, 3), pts = wdCurve();
+    const { X, Y } = frame(ctx, box, [0, 9], [.4, 1], { xt: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], xl: "width D (log scale)", yt: [.4, .6, .8, 1] });
+    for (let k = 0; k <= 9; k += 1) { ctx.fillStyle = C.surface; ctx.fillRect(X(k) - 12, box.y + box.h + 4, 24, FS * 1.2); text(ctx, String(wdD(k)), X(k), box.y + box.h + 6, C.muted, "center", "top", FS * .85); }
+    polyline(ctx, pts.map(([k, tr]) => [X(k), Y(tr)]), C.muted, 1.6);
+    polyline(ctx, pts.map(([k, , te]) => [X(k), Y(te)]), C.sc, 2.6);
+    const lb = lineBestAcc(); line(ctx, box.x, Y(lb), box.x + box.w, Y(lb), C.q, 1.2, [5, 4]);
+    text(ctx, "best single line", box.x + box.w - 4, Y(lb) - 4, C.q, "right", "bottom", FS * .85, 600, BODY);
+    ctx.fillStyle = C.sc; ctx.beginPath(); ctx.arc(X(WD.k), Y(F.te), 5, 0, 7); ctx.fill();
+  }
+  {
+    const { ctx, w, h } = fit($("cvW3")), n = 6, gap = FS * .8, ts = Math.max(20, Math.min((w - gap * (n - 1)) / n, h - FS * 1.6)), ox = (w - (ts * n + gap * (n - 1))) / 2, G = 48;
+    for (let j = 0; j < n; j++) {
+      const [ux, uy, c] = WD.U[j];
+      const img = heatImg(`wu|${WD.seed}|${j}`, G, G, (gy, gx) => divRGB(Math.min(1, Math.max(0, ux * (-1 + 2 * (gx + .5) / G) + uy * (1 - 2 * (gy + .5) / G) - c) / 1.2)));
+      drawImg(ctx, img, ox + j * (ts + gap), 2, ts, ts, true);
+      ctx.strokeStyle = j < D ? C.sc : C.line; ctx.lineWidth = j < D ? 2 : 1; ctx.strokeRect(ox + j * (ts + gap), 2, ts, ts);
+      text(ctx, j < D ? `unit ${j + 1}` : `unit ${j + 1} (off)`, ox + j * (ts + gap) + ts / 2, ts + 6, j < D ? C.ink : C.muted, "center", "top", FS * .8);
+    }
+  }
+}
+function wdBtn() { const b = $("wSweep"); b.classList.toggle("running", !!WD.sweep); b.querySelector("span").textContent = WD.sweep ? "Stop" : "Sweep the width"; }
+// =====================================================================
+// 4. Capacity: Cover's theorem
+// =====================================================================
+const CV = { d: 10, N2: 4, seed: 1, pts2: [], gallery: [], sims: {}, run: null };
+function coverP(N, d) { // probability that N random labelings in d dims (with bias) are separable
+  if (N <= d + 1) return 1;
+  let pmf = Math.pow(2, -(N - 1)), s = 0;
+  for (let k = 0; k <= d; k++) { s += pmf; pmf *= (N - 1 - k) / (k + 1); }
+  return Math.min(1, s);
+}
+function perceptron(X, y, dim, maxEpochs) { // X: rows already augmented with a trailing 1
+  const w = new Float64Array(dim);
+  for (let e = 0; e < maxEpochs; e++) {
+    let mistakes = 0;
+    for (let i = 0; i < X.length; i++) {
+      const x = X[i]; let s = 0; for (let k = 0; k < dim; k++) s += w[k] * x[k];
+      if (s * y[i] <= 0) { mistakes++; for (let k = 0; k < dim; k++) w[k] += y[i] * x[k]; }
+    }
+    if (!mistakes) return w;
+  }
+  return null;
+}
+function cvGallery() {
+  const r = rng(CV.seed * 31 + 5), N = CV.N2;
+  CV.pts2 = Array.from({ length: N }, () => [1.6 * r() - .8, 1.6 * r() - .8]);
+  CV.gallery = [];
+  for (let m = 0; m < 1 << N; m++) {
+    const y = CV.pts2.map((_, i) => (m >> i) & 1 ? 1 : -1);
+    CV.gallery.push({ y, w: perceptron(CV.pts2.map(([a, b]) => [a, b, 1]), y, 3, 4000) });
+  }
+}
+const CV_RATIOS = [.5, 1, 1.5, 1.75, 2, 2.25, 2.5, 3, 3.5];
+function cvStartTrials() {
+  const d = CV.d, jobs = [];
+  for (const q of CV_RATIOS) { const N = Math.max(2, Math.round(q * (d + 1))); for (let t = 0; t < 20; t++) jobs.push(N); }
+  CV.sims[d] = {};
+  CV.run = RM.matches ? null : { d, jobs, i: 0, r: rng(1234 + d) };
+  if (RM.matches) { const run = { d, jobs, i: 0, r: rng(1234 + d) }; while (run.i < jobs.length) cvTrial(run); }
+  cvBtn();
+}
+function cvTrial(run) {
+  const N = run.jobs[run.i++], d = run.d, r = run.r;
+  const X = Array.from({ length: N }, () => { const v = new Float64Array(d + 1); for (let k = 0; k < d; k++) v[k] = gauss(r); v[d] = 1; return v; });
+  const y = Array.from({ length: N }, () => r() < .5 ? 1 : -1);
+  const ok = perceptron(X, y, d + 1, 400) ? 1 : 0;
+  const S = CV.sims[d], e = S[N] || (S[N] = [0, 0]); e[0] += ok; e[1]++;
+}
+function cvUpdate() {
+  setText("cdO", String(CV.d)); setText("cNO", String(CV.N2));
+  const sep = CV.gallery.filter(g => g.w).length, tot = CV.gallery.length, N = CV.N2;
+  const theory = Math.round(coverP(N, 2) * tot);
+  setText("cT2", `All ${tot} labelings of ${N} points in 2‑D`);
+  setTex($("cEq"), `\\(\\text{2‑D, }N=${N}:\\ \\class{ss}{\\mathbf{${sep}\\text{ of }${tot}}}\\ \\text{separable (theory }${theory}\\text{)}\\qquad d=${CV.d}:\\ P\\big(N=${CV.d + 1}\\big)=1,\\ \\ P\\big(N=${2 * (CV.d + 1)}\\big)=0.5,\\ \\ P\\big(N=${3 * (CV.d + 1)}\\big)=${tf(coverP(3 * (CV.d + 1), CV.d), 3)}\\)`, true);
+}
+function drawCv() {
+  if (CV.run) {
+    const t0 = now();
+    while (CV.run.i < CV.run.jobs.length && now() - t0 < 12) cvTrial(CV.run);
+    if (CV.run.i >= CV.run.jobs.length) { CV.run = null; cvBtn(); }
+  }
+  {
+    const { ctx, w, h } = fit($("cvC1")), box = stdBox(w, h, 3.4, 1.2, 1.4, 3.2);
+    const { X, Y } = frame(ctx, box, [0, 4], [0, 1], { xl: "points per parameter, N / (d + 1)", yt: [0, .25, .5, .75, 1] });
+    line(ctx, X(2), box.y, X(2), box.y + box.h, C.muted, 1, [4, 3]);
+    text(ctx, "N = 2(d+1)", X(2) + 4, box.y + 2, C.muted, "left", "top", FS * .85, 500, BODY);
+    const ds = [...new Set([1, 2, 5, 25, 50, CV.d])].sort((a, b) => a - b);
+    for (const d of ds) {
+      const on = d === CV.d, pts = [];
+      for (let N = 1; N <= 4 * (d + 1); N++) pts.push([X(N / (d + 1)), Y(coverP(N, d))]);
+      polyline(ctx, pts, on ? C.sc : rgba(C.muted, .7), on ? 3 : 1.2);
+      if (!on) { const N = Math.round(2.6 * (d + 1)); text(ctx, "d=" + d, X(N / (d + 1)) + 4, Y(coverP(N, d)) - 2, C.muted, "left", "bottom", FS * .78); }
+    }
+    text(ctx, "d=" + CV.d, X(1.3) + 6, Y(coverP(Math.round(1.3 * (CV.d + 1)), CV.d)), C.sc, "left", "middle", FS * .95, 700);
+    const S = CV.sims[CV.d];
+    if (S) for (const [N, [ok, n]] of Object.entries(S)) {
+      ctx.fillStyle = C.q; ctx.beginPath(); ctx.arc(X(N / (CV.d + 1)), Y(ok / n), 5, 0, 7); ctx.fill();
+      text(ctx, `${ok}/${n}`, X(N / (CV.d + 1)), Y(ok / n) - 8, C.q, "center", "bottom", FS * .72, 600);
+    }
+  }
+  {
+    const { ctx, w, h } = fit($("cvC2")), n = CV.gallery.length, cols = n <= 16 ? 4 : 8, rows = Math.ceil(n / cols), gap = 6;
+    const ts = Math.max(20, Math.min((w - gap * (cols - 1)) / cols, (h - gap * (rows - 1)) / rows)), ox = (w - (ts * cols + gap * (cols - 1))) / 2;
+    CV.gallery.forEach((g, i) => {
+      const x0 = ox + (i % cols) * (ts + gap), y0 = Math.floor(i / cols) * (ts + gap);
+      const P = (a, b) => [x0 + (a + 1) / 2 * ts, y0 + (1 - b) / 2 * ts];
+      ctx.fillStyle = g.w ? C.sunk : rgba(C.dk, .12); ctx.fillRect(x0, y0, ts, ts);
+      ctx.strokeStyle = g.w ? C.line : C.dk; ctx.lineWidth = g.w ? 1 : 1.5; ctx.strokeRect(x0, y0, ts, ts);
+      if (g.w) {
+        const [a, b, c] = g.w;
+        ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, ts, ts); ctx.clip();
+        if (Math.abs(b) > Math.abs(a)) line(ctx, ...P(-1, -(a * -1 + c) / b), ...P(1, -(a + c) / b), C.ink, 1.4);
+        else line(ctx, ...P(-(b * -1 + c) / a, -1), ...P(-(b + c) / a, 1), C.ink, 1.4);
+        ctx.restore();
+      }
+      CV.pts2.forEach(([a, b], k) => { ctx.fillStyle = g.y[k] > 0 ? C.q : C.k; ctx.beginPath(); ctx.arc(...P(a, b), Math.max(2.5, ts * .06), 0, 7); ctx.fill(); });
+      ctx.fillStyle = C.surface; ctx.fillRect(x0 + 1, y0 + ts - Math.max(14, ts * .2) - 1, Math.max(14, ts * .2), Math.max(14, ts * .2));
+      text(ctx, g.w ? "✓" : "✗", x0 + 1 + Math.max(14, ts * .2) / 2, y0 + ts - 1 - Math.max(14, ts * .2) / 2, g.w ? C.v : C.dk, "center", "middle", Math.max(9, ts * .15), 700, BODY);
+    });
+  }
+}
+function cvBtn() { const b = $("cRun"); b.classList.toggle("running", !!CV.run); b.querySelector("span").textContent = CV.run ? "Running…" : "Run trials"; }
+
+// =====================================================================
+// 5. Room: near-orthogonality of random directions
+// =====================================================================
+const DL = [2, 3, 5, 10, 20, 50, 100, 200, 500, 768, 1000];
+const RO = { di: 3, M: 100, seed: 1, ang: null, worst: null, ref: null };
+function roVectors(d, n, r) { return Array.from({ length: n }, () => { const v = new Float64Array(d); let s = 0; for (let k = 0; k < d; k++) { v[k] = gauss(r); s += v[k] * v[k]; } s = Math.sqrt(s); for (let k = 0; k < d; k++) v[k] /= s; return v; }); }
+function roWorst(d, seed) { // worst |angle - 90°| among the first M vectors, for every M up to 400
+  const V = roVectors(d, 400, rng(seed)), out = new Float64Array(401);
+  let worst = 0;
+  for (let j = 1; j < 400; j++) {
+    for (let i = 0; i < j; i++) { let s = 0; const a = V[i], b = V[j]; for (let k = 0; k < d; k++) s += a[k] * b[k]; worst = Math.max(worst, Math.abs(Math.asin(clamp(s, -1, 1))) * 180 / Math.PI); }
+    out[j + 1] = worst;
+  }
+  return out;
+}
+function roBuild() {
+  const d = DL[RO.di], r = rng(RO.seed * 17 + d);
+  RO.ang = new Float64Array(4000);
+  for (let p = 0; p < 4000; p++) { const [a, b] = roVectors(d, 2, r); let s = 0; for (let k = 0; k < d; k++) s += a[k] * b[k]; RO.ang[p] = Math.acos(clamp(s, -1, 1)) * 180 / Math.PI; }
+  RO.worst = roWorst(d, RO.seed * 101 + d);
+  if (!RO.ref) RO.ref = roWorst(768, 777);
+  roUpdate();
+}
+function roUpdate() {
+  const d = DL[RO.di];
+  $("md").value = RO.di; $("mM").value = RO.M;
+  setText("mdO", String(d)); setText("mMO", String(RO.M));
+  const mean = RO.ang.reduce((s, a) => s + a, 0) / RO.ang.length;
+  const sd = Math.sqrt(RO.ang.reduce((s, a) => s + (a - mean) ** 2, 0) / RO.ang.length);
+  setTex($("mEq"), `\\(d=${d}:\\quad \\text{typical angle }=90^\\circ\\pm${sd.toFixed(1)}^\\circ\\ \\ (\\text{theory }\\pm${(57.3 / Math.sqrt(d)).toFixed(1)}^\\circ)\\qquad ${RO.M}\\ \\text{random directions: worst pair is }\\class{ss}{\\mathbf{${RO.worst[RO.M].toFixed(1)}^\\circ}}\\ \\text{off perpendicular}\\)`, true);
+}
+function drawRo() {
+  const d = DL[RO.di];
+  {
+    const { ctx, w, h } = fit($("cvM1")), box = stdBox(w, h, 3.4, 1.2, 1.2, 3), B = 60, hist = new Array(B).fill(0);
+    for (const a of RO.ang) hist[Math.min(B - 1, Math.floor(a / 180 * B))]++;
+    const mx = Math.max(...hist);
+    const { X, Y } = frame(ctx, box, [0, 180], [0, mx * 1.08], { xt: [0, 45, 90, 135, 180], yt: [], xl: "angle between the two directions (degrees)" });
+    for (let i = 0; i < B; i++) { ctx.fillStyle = C.sc; ctx.fillRect(X(i * 180 / B) + .5, Y(hist[i]), X(180 / B) - X(0) - 1, Y(0) - Y(hist[i])); }
+    line(ctx, X(90), box.y, X(90), box.y + box.h, C.ink, 1, [4, 3]);
+    text(ctx, "90°", X(90) + 4, box.y + 2, C.ink, "left", "top", FS * .85, 600);
+  }
+  {
+    const { ctx, w, h } = fit($("cvM2")), box = stdBox(w, h, 3.4, 1.2, 1.2, 3);
+    const { X, Y } = frame(ctx, box, [2, 400], [0, 90], { yt: [0, 15, 30, 45, 60, 75, 90], xl: "number of directions M" });
+    const curve = (arr, col, wdt, dash) => { const pts = []; for (let m = 2; m <= 400; m += 2) pts.push([X(m), Y(arr[m])]); polyline(ctx, pts, col, wdt, dash); };
+    if (d !== 768) { curve(RO.ref, C.q, 1.6, [5, 4]); text(ctx, "d = 768", X(400) - 4, Y(RO.ref[400]) - 4, C.q, "right", "bottom", FS * .85, 600); }
+    curve(RO.worst, C.sc, 2.8);
+    text(ctx, "d = " + d, X(400) - 4, Y(RO.worst[400]) + (RO.worst[400] > 80 ? 14 : -4), C.sc, "right", RO.worst[400] > 80 ? "top" : "bottom", FS * .9, 700);
+    line(ctx, X(RO.M), box.y, X(RO.M), box.y + box.h, C.ink, 1, [3, 3]);
+    ctx.fillStyle = C.sc; ctx.beginPath(); ctx.arc(X(RO.M), Y(RO.worst[RO.M]), 5, 0, 7); ctx.fill();
+    text(ctx, "degrees off 90°", box.x + 6, box.y + 4, C.muted, "left", "top", FS * .85, 500, BODY);
+  }
+}
+
+// =====================================================================
+// 6. The catch: distance concentration
+// =====================================================================
+const KC = { di: 1, dist: [], sweep: null };
+function kcDistances() {
+  KC.dist = DL.map((d, i) => {
+    const r = rng(500 + i), q = Array.from({ length: d }, r), rel = [];
+    let mn = 1e9, mx = 0;
+    for (let p = 0; p < 400; p++) { let s = 0; for (let k = 0; k < d; k++) { const t = r() - q[k]; s += t * t; } s = Math.sqrt(s); rel.push(s); mn = Math.min(mn, s); mx = Math.max(mx, s); }
+    const mean = rel.reduce((a, b) => a + b, 0) / rel.length;
+    return { rel: rel.map(v => v / mean), contrast: (mx - mn) / mn };
+  });
+}
+function kcUpdate() {
+  const d = DL[KC.di];
+  $("kd").value = KC.di; setText("kdO", String(d));
+  setTex($("kEq"), `\\(d=${d}:\\quad \\text{nearest is }${tf(1 / (1 + KC.dist[KC.di].contrast) * 100, 0)}\\%\\ \\text{as far as the farthest}\\ \\ \\big(\\tfrac{d_{\\max}-d_{\\min}}{d_{\\min}}=${tf(KC.dist[KC.di].contrast)}\\big)\\qquad \\text{volume within }5\\%\\text{ of the surface}=\\class{ss}{\\mathbf{${(100 * (1 - Math.pow(.9, d))).toFixed(d > 50 ? 4 : 1)}\\%}}\\)`, true);
+}
+function drawKc() {
+  if (KC.sweep) {
+    const i = Math.min(DL.length - 1, Math.floor((now() - KC.sweep) / 800));
+    if (i !== KC.di) { KC.di = i; kcUpdate(); }
+    if (i >= DL.length - 1) { KC.sweep = null; kcBtn(); }
+  }
+  const cur = KC.dist[KC.di];
+  {
+    const { ctx, w, h } = fit($("cvK1")), box = stdBox(w, h, 3.4, 1.2, 1.2, 3), B = 50, hist = new Array(B).fill(0);
+    for (const v of cur.rel) { const b = Math.floor(v / 2 * B); if (b >= 0 && b < B) hist[b]++; }
+    const mx = Math.max(...hist);
+    const { X, Y } = frame(ctx, box, [0, 2], [0, mx * 1.08], { xt: [0, .5, 1, 1.5, 2], yt: [], xl: "distance ÷ mean distance" });
+    for (let i = 0; i < B; i++) { ctx.fillStyle = C.k; ctx.fillRect(X(i * 2 / B) + .5, Y(hist[i]), X(2 / B) - X(0) - 1, Y(0) - Y(hist[i])); }
+    const mn = Math.min(...cur.rel), mxr = Math.max(...cur.rel);
+    line(ctx, X(mn), box.y, X(mn), box.y + box.h, C.q, 1.5, [4, 3]); line(ctx, X(mxr), box.y, X(mxr), box.y + box.h, C.q, 1.5, [4, 3]);
+    text(ctx, "nearest", X(mn) - 4, box.y + 2, C.q, "right", "top", FS * .82, 600, BODY);
+    text(ctx, "farthest", X(mxr) + 4, box.y + 2, C.q, "left", "top", FS * .82, 600, BODY);
+  }
+  {
+    const { ctx, w, h } = fit($("cvK2")), box = stdBox(w, h, 3.4, 1.2, 1.2, 3);
+    const { X, Y } = frame(ctx, box, [0, DL.length - 1], [-1.5, 3], { xt: [], yt: [] });
+    for (const v of [-1, 0, 1, 2, 3]) { line(ctx, box.x, Y(v), box.x + box.w, Y(v), C.grid, 1); text(ctx, num(Math.pow(10, v)), box.x - 6, Y(v), C.muted, "right", "middle", FS * .9); }
+    DL.forEach((d, i) => text(ctx, String(d), X(i), box.y + box.h + 6, i === KC.di ? C.ink : C.muted, "center", "top", FS * .82, i === KC.di ? 700 : 500));
+    text(ctx, "dimension d", box.x + box.w, box.y + box.h + FS * 2.2, C.muted, "right", "top", FS * .9, 500, BODY);
+    const pts = KC.dist.map((o, i) => [X(i), Y(Math.log10(o.contrast))]);
+    polyline(ctx, pts, C.k, 2.4);
+    ctx.fillStyle = C.k; for (const [x, y] of pts) { ctx.beginPath(); ctx.arc(x, y, 3, 0, 7); ctx.fill(); }
+    ctx.fillStyle = C.q; ctx.beginPath(); ctx.arc(X(KC.di), Y(Math.log10(cur.contrast)), 6, 0, 7); ctx.fill();
+  }
+}
+function kcBtn() { const b = $("kSweep"); b.classList.toggle("running", !!KC.sweep); b.querySelector("span").textContent = KC.sweep ? "Stop" : "Sweep the dimension"; }
+
+// =====================================================================
+// 7. Features: search images by raw pixels vs by two shape features
+// =====================================================================
+const FT = { seed: 1, q: 0, imgs: [], score: null };
+const FT_NAMES = ["circle", "square", "triangle"];
+function ftImages() {
+  const r = rng(FT.seed * 97 + 1), cv = document.createElement("canvas"); cv.width = cv.height = 24;
+  const x = cv.getContext("2d", { willReadFrequently: true });
+  FT.imgs = [];
+  // 20 spots in the frame; one circle, one square and one triangle near each spot
+  for (let p = 0; p < 20; p++) {
+    const px = 7 + r() * 10, py = 7 + r() * 10;
+    for (let cls = 0; cls < 3; cls++) {
+      const cx = px + (r() - .5) * 2, cy = py + (r() - .5) * 2, s = 5 + r() * 1.6;
+      x.fillStyle = "#000"; x.fillRect(0, 0, 24, 24); x.fillStyle = "#fff"; x.beginPath();
+      if (cls === 0) x.arc(cx, cy, s, 0, 7);
+      else if (cls === 1) x.rect(cx - s * .88, cy - s * .88, s * 1.76, s * 1.76);
+      else { const R = s * 1.2; x.moveTo(cx, cy - R); x.lineTo(cx + R * .866, cy + R * .5); x.lineTo(cx - R * .866, cy + R * .5); x.closePath(); }
+      x.fill();
+      const d = x.getImageData(0, 0, 24, 24).data, pix = new Float32Array(576);
+      for (let i = 0; i < 576; i++) pix[i] = d[4 * i] / 255;
+      FT.imgs.push({ pix, cls });
+    }
+  }
+  // two shape features: spread about the centroid (scale-free) and how much of the bounding box is filled
+  for (const im of FT.imgs) {
+    let A = 0, mx = 0, my = 0, x0 = 24, y0 = 24, x1 = 0, y1 = 0;
+    for (let i = 0; i < 576; i++) { const v = im.pix[i], u = i % 24, w = Math.floor(i / 24); A += v; mx += v * u; my += v * w; if (v > .5) { x0 = Math.min(x0, u); x1 = Math.max(x1, u); y0 = Math.min(y0, w); y1 = Math.max(y1, w); } }
+    mx /= A; my /= A;
+    let m2 = 0; for (let i = 0; i < 576; i++) { const u = i % 24 - mx, w = Math.floor(i / 24) - my; m2 += im.pix[i] * (u * u + w * w); }
+    im.raw = [m2 / (A * A), A / ((x1 - x0 + 1) * (y1 - y0 + 1))];
+    im.edge = [];
+    for (let i = 0; i < 576; i++) {
+      if (im.pix[i] <= .5) continue;
+      const u = i % 24, w = Math.floor(i / 24);
+      if (u === 0 || u === 23 || w === 0 || w === 23 || im.pix[i - 1] <= .5 || im.pix[i + 1] <= .5 || im.pix[i - 24] <= .5 || im.pix[i + 24] <= .5) im.edge.push([u, w]);
+    }
+  }
+  for (let k = 0; k < 2; k++) {
+    const vals = FT.imgs.map(im => im.raw[k]), m = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const s = Math.sqrt(vals.reduce((a, b) => a + (b - m) ** 2, 0) / vals.length) || 1;
+    for (const im of FT.imgs) { im.feat = im.feat || [0, 0]; im.feat[k] = (im.raw[k] - m) / s; }
+  }
+  // how often the top 5 have the query's shape, over every possible query
+  let ph = 0, fh = 0;
+  for (let q = 0; q < FT.imgs.length; q++) {
+    ph += ftRank("pix", q).slice(0, 5).filter(o => FT.imgs[o.i].cls === FT.imgs[q].cls).length;
+    fh += ftRank("feat", q).slice(0, 5).filter(o => FT.imgs[o.i].cls === FT.imgs[q].cls).length;
+  }
+  FT.score = { pix: ph / (5 * FT.imgs.length), feat: fh / (5 * FT.imgs.length), chance: 19 / 59 };
+  FT.q = 0;
+}
+function ftDist(by, a, b) {
+  let s = 0;
+  if (by === "pix") for (let k = 0; k < 576; k++) s += (a.pix[k] - b.pix[k]) ** 2;
+  else for (let k = 0; k < 2; k++) s += (a.feat[k] - b.feat[k]) ** 2;
+  return Math.sqrt(s);
+}
+function ftRank(by, q = FT.q) { const Q = FT.imgs[q]; return FT.imgs.map((im, i) => ({ i, d: ftDist(by, im, Q) })).filter(o => o.i !== q).sort((a, b) => a.d - b.d); }
+function ftUpdate() {
+  const q = FT.imgs[FT.q], hit = by => ftRank(by).slice(0, 5).filter(o => FT.imgs[o.i].cls === q.cls).length;
+  setTex($("fEq"), `\\(\\text{this query (a ${FT_NAMES[q.cls]}): top‑5 same shape}=\\class{qq}{\\mathbf{${hit("pix")}/5}}\\ \\text{by pixels},\\ \\class{ss}{\\mathbf{${hit("feat")}/5}}\\ \\text{by spread + fill}\\qquad \\text{over all 60 queries: pixels }${Math.round(100 * FT.score.pix)}\\%,\\ \\text{features }${Math.round(100 * FT.score.feat)}\\%,\\ \\text{chance }${Math.round(100 * FT.score.chance)}\\%\\)`, true);
+}
+function ftThumb(ctx, i, x, y, s, border, overlay) {
+  const im = FT.imgs[i], ink = hex(C.ink), bg = hex(C.sunk);
+  const img = heatImg(`ft|${FT.seed}|${i}`, 24, 24, (r, c) => { const v = im.pix[r * 24 + c]; return bg.map((b, k) => Math.round(b + (ink[k] - b) * v)); });
+  drawImg(ctx, img, x, y, s, s);
+  if (overlay) { // where the query shape sits
+    const p = s / 24; ctx.fillStyle = rgba(C.q, .95);
+    for (const [u, w] of overlay) ctx.fillRect(x + u * p + p * .2, y + w * p + p * .2, p * .6, p * .6);
+  }
+  if (border) { ctx.strokeStyle = border; ctx.lineWidth = 3; ctx.strokeRect(x + 1.5, y + 1.5, s - 3, s - 3); }
+  else { ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.strokeRect(x, y, s, s); }
+}
+function drawFt() {
+  const q = FT.imgs[FT.q];
+  {
+    const { ctx, w, h } = fit($("cvF1")), lab = FS * 1.5;
+    const qs = Math.min(w * .26, h * .3), ts = Math.max(24, Math.min((w - FS) / 5 - 10, (h - qs - lab * 6.2) / 2));
+    text(ctx, `query: a ${FT_NAMES[q.cls]}`, w / 2, 2, C.ink, "center", "top", FS * .95, 600, BODY);
+    ftThumb(ctx, FT.q, (w - qs) / 2, lab + 2, qs, C.q);
+    [["pix", "nearest by raw pixels (576 numbers)", C.q], ["feat", "nearest by 2 shape features: spread (Hu φ₁) and fill (extent)", C.sc]].forEach(([by, title, col], k) => {
+      const y0 = lab + qs + 12 + k * (ts + lab * 2.6);
+      text(ctx, title, FS * .4, y0, col, "left", "top", FS * .92, 600, BODY);
+      const ox = (w - (ts * 5 + 10 * 4)) / 2;
+      ftRank(by).slice(0, 5).forEach((o, j) => {
+        const same = FT.imgs[o.i].cls === q.cls, x = ox + j * (ts + 10), y = y0 + lab;
+        ftThumb(ctx, o.i, x, y, ts, same ? C.v : C.dk, q.edge);
+        text(ctx, `${same ? "✓" : "✗"} ${FT_NAMES[FT.imgs[o.i].cls]}`, x + ts / 2, y + ts + 3, same ? C.v : C.dk, "center", "top", FS * .8, 700, BODY);
+        text(ctx, `d = ${o.d.toFixed(by === "pix" ? 1 : 2)}`, x + ts / 2, y + ts + 3 + FS * 1.05, C.muted, "center", "top", FS * .74);
+      });
+    });
+  }
+  {
+    // every other image as a dot, by its distance to the query: same shape vs other shapes, in each space
+    const { ctx, w, h } = fit($("cvF2")), left = FS * 7.6, right = FS * 1.2, top = FS * .6, pw = w - left - right;
+    const blocks = [["pix", "raw pixels (576 numbers)", C.q], ["feat", "spread (Hu φ₁) + fill (extent)", C.sc]], bh = (h - top - FS * .6) / 2;
+    blocks.forEach(([by, title, col], k) => {
+      const rk = ftRank(by), dmax = rk[rk.length - 1].d, cut = rk[4].d, y0 = top + k * bh;
+      const X = d => left + d / dmax * pw;
+      text(ctx, title, left, y0, col, "left", "top", FS * .95, 700, BODY);
+      const rows = [[true, "same shape"], [false, "other shapes"]];
+      const yA = y0 + FS * 2.2, yB = y0 + bh - FS * 1.9, rowY = r => lerp(yA, yB, r ? .72 : .28);
+      rows.forEach(([same, name], r) => {
+        const y = rowY(r);
+        line(ctx, left, y, left + pw, y, C.grid, 1);
+        text(ctx, name, left - 8, y, same ? C.v : C.dk, "right", "middle", FS * .85, 600, BODY);
+        rk.forEach((o, j) => {
+          if ((FT.imgs[o.i].cls === q.cls) !== same) return;
+          ctx.fillStyle = same ? C.v : C.dk; ctx.globalAlpha = .85;
+          ctx.beginPath(); ctx.arc(X(o.d), y + ((o.i * 7) % 5 - 2) * 2.2, 4, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+          if (j < 5) { ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(X(o.d), y + ((o.i * 7) % 5 - 2) * 2.2, 7, 0, 7); ctx.stroke(); }
+        });
+      });
+      line(ctx, X(cut), yA, X(cut), yB, C.ink, 1.2, [4, 3]);
+      text(ctx, "top‑5 cut‑off", X(cut) + 4, yA - 2, C.ink, "left", "bottom", FS * .78, 500, BODY);
+      text(ctx, "0", left, yB + 4, C.muted, "center", "top", FS * .78);
+      text(ctx, "farthest →", left + pw, yB + 4, C.muted, "right", "top", FS * .78, 500, BODY);
+    });
+  }
+}
+
+// =====================================================================
+// navigation
+// =====================================================================
+const CH = ["tang", "lift", "wide", "cover", "room", "curse", "feat"];
+const DRAW = { tang: drawTg, lift: drawLf, wide: drawWd, cover: drawCv, room: drawRo, curse: drawKc, feat: drawFt };
+const PLAY = { tang: "tBest", lift: "lBest", wide: "wSweep", cover: "cRun", room: "mNew", curse: "kSweep", feat: "fQuery" };
+let cur = "tang";
+function show(id) {
+  cur = id;
+  const ci = CH.indexOf(id);
+  for (const c of CH) { $("r-" + c).hidden = c !== id; $("v-" + c).hidden = c !== id; }
+  document.querySelectorAll(".vtab").forEach(b => { const on = b.dataset.v === id; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll("#trail button").forEach(b => { const g = +b.dataset.g; b.classList.toggle("lit", g === ci); b.classList.toggle("done", g < ci); });
+  $("prev").disabled = ci === 0; $("next").disabled = ci === CH.length - 1;
+  document.querySelector(".rail-body").scrollTop = 0;
+  typesetVisible();
+}
+document.querySelectorAll(".vtab").forEach(b => b.addEventListener("click", () => show(b.dataset.v)));
+document.querySelectorAll("#trail button").forEach(b => b.addEventListener("click", () => show(CH[+b.dataset.g])));
+document.querySelector(".vtabs").addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const i = CH.indexOf(cur), n = CH[(i + (e.key === "ArrowRight" ? 1 : CH.length - 1)) % CH.length];
+  show(n); document.querySelector(`.vtab[data-v="${n}"]`).focus(); e.preventDefault();
+});
+$("prev").addEventListener("click", () => { const i = CH.indexOf(cur); if (i > 0) show(CH[i - 1]); });
+$("next").addEventListener("click", () => { const i = CH.indexOf(cur); if (i < CH.length - 1) show(CH[i + 1]); });
+const radios = (name, fn) => document.querySelectorAll(`input[name=${name}]`).forEach(r => r.addEventListener("change", () => fn(r.value)));
+const setRadio = (name, v) => { const r = document.querySelector(`input[name=${name}][value=${v}]`); if (r) r.checked = true; };
+
+// ---------- controls ----------
+function setDataset(name) { dsBuild(name); tgPickSide(); LF.w = null; tgUpdate(); lfUpdate(); wdUpdate(); }
+radios("ds", setDataset); radios("ds2", setDataset); radios("ds3", setDataset);
+// 1
+{
+  const cv = $("cvT1");
+  cv.addEventListener("pointerdown", e => {
+    if (!TG.geo) return;
+    const [x, y, g] = tgPointer(e);
+    const d1 = Math.hypot(x - TG.h1[0], y - TG.h1[1]), d2 = Math.hypot(x - TG.h2[0], y - TG.h2[1]), lim = 40 / g.S * 2;
+    if (Math.min(d1, d2) > lim) return;
+    TG.anim = null; TG.drag = d1 <= d2 ? "h1" : "h2"; cv.setPointerCapture(e.pointerId);
+  });
+  cv.addEventListener("pointermove", e => {
+    if (!TG.geo) return;
+    const [x, y, g] = tgPointer(e);
+    if (!TG.drag) { const lim = 40 / g.S * 2; cv.style.cursor = Math.min(Math.hypot(x - TG.h1[0], y - TG.h1[1]), Math.hypot(x - TG.h2[0], y - TG.h2[1])) < lim ? "grab" : "default"; return; }
+    TG[TG.drag] = [x, y];
+    if (Math.hypot(TG.h1[0] - TG.h2[0], TG.h1[1] - TG.h2[1]) < .05) return;
+    tgPickSide(); tgUpdate();
+  });
+  cv.addEventListener("pointerup", () => TG.drag = null);
+  cv.addEventListener("pointercancel", () => TG.drag = null);
+}
+$("tBest").addEventListener("click", tgBest);
+$("tReset").addEventListener("click", () => { TG.anim = null; TG.h1 = TG0.h1.slice(); TG.h2 = TG0.h2.slice(); setDataset("disk"); });
+// 2
+radios("lf", v => { LF.lift = v; LF.w = null; lfUpdate(); });
+$("lH").addEventListener("input", e => { LF.h = +e.target.value; LF.w = null; lfUpdate(); });
+$("lBest").addEventListener("click", lfBest);
+$("lReset").addEventListener("click", () => { LF.lift = "r2"; LF.h = .15; LF.w = null; LF.yaw = .6; LF.pitch = .45; setRadio("lf", "r2"); $("lH").value = .15; setDataset("disk"); });
+{
+  const cv = $("cvL1");
+  cv.addEventListener("pointerdown", e => { LF.drag = [e.clientX, e.clientY, LF.yaw, LF.pitch]; cv.setPointerCapture(e.pointerId); cv.style.cursor = "grabbing"; });
+  cv.addEventListener("pointermove", e => { if (!LF.drag) { cv.style.cursor = "grab"; return; } const [x0, y0, a, b] = LF.drag; LF.yaw = a + (e.clientX - x0) * .01; LF.pitch = clamp(b + (e.clientY - y0) * .01, -.2, 1.45); });
+  cv.addEventListener("pointerup", () => { LF.drag = null; cv.style.cursor = "grab"; });
+  cv.addEventListener("pointercancel", () => LF.drag = null);
+}
+// 3
+$("wD").addEventListener("input", e => { WD.sweep = null; wdBtn(); WD.k = +e.target.value; wdUpdate(); });
+$("wSweep").addEventListener("click", () => {
+  if (WD.sweep) WD.sweep = null;
+  else if (RM.matches) { WD.k = 9; wdUpdate(); }
+  else { WD.k = 0; wdUpdate(); WD.sweep = now(); }
+  wdBtn();
+});
+$("wNew").addEventListener("click", () => { WD.seed++; wdUnits(); wdUpdate(); });
+$("wReset").addEventListener("click", () => { WD.sweep = null; wdBtn(); WD.k = 3; WD.seed = 1; wdUnits(); setDataset("disk"); });
+// 4
+$("cd").addEventListener("input", e => { CV.d = +e.target.value; CV.run = null; cvBtn(); cvUpdate(); });
+$("cN").addEventListener("input", e => { CV.N2 = +e.target.value; cvGallery(); cvUpdate(); });
+$("cRun").addEventListener("click", () => { if (!CV.run) cvStartTrials(); });
+$("cNew").addEventListener("click", () => { CV.seed++; cvGallery(); cvUpdate(); });
+$("cReset").addEventListener("click", () => { CV.run = null; cvBtn(); CV.d = 10; CV.N2 = 4; CV.seed = 1; CV.sims = {}; $("cd").value = 10; $("cN").value = 4; cvGallery(); cvUpdate(); });
+// 5
+$("md").addEventListener("input", e => { RO.di = +e.target.value; roBuild(); });
+$("mM").addEventListener("input", e => { RO.M = +e.target.value; roUpdate(); });
+$("mNew").addEventListener("click", () => { RO.seed++; roBuild(); });
+$("mReset").addEventListener("click", () => { RO.di = 3; RO.M = 100; RO.seed = 1; roBuild(); });
+// 6
+$("kd").addEventListener("input", e => { KC.sweep = null; kcBtn(); KC.di = +e.target.value; kcUpdate(); });
+$("kSweep").addEventListener("click", () => {
+  if (KC.sweep) KC.sweep = null;
+  else if (RM.matches) { KC.di = DL.length - 1; kcUpdate(); }
+  else { KC.di = 0; kcUpdate(); KC.sweep = now(); }
+  kcBtn();
+});
+$("kReset").addEventListener("click", () => { KC.sweep = null; kcBtn(); KC.di = 1; kcUpdate(); });
+// 7: step through queries so every shape gets a turn
+$("fQuery").addEventListener("click", () => { FT.q = (FT.q + 7) % FT.imgs.length; ftUpdate(); });
+$("fNew").addEventListener("click", () => { FT.seed++; ftImages(); ftUpdate(); });
+$("fReset").addEventListener("click", () => { FT.seed = 1; ftImages(); ftUpdate(); });
+
+// keyboard, full screen, theme
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const tag = e.target && e.target.tagName;
+  if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+  if (e.key >= "1" && e.key <= "7") { show(CH[+e.key - 1]); e.preventDefault(); }
+  else if (e.key === " " && tag !== "BUTTON") { $(PLAY[cur]).click(); e.preventDefault(); }
+});
+if (!document.fullscreenEnabled) $("fs").hidden = true;
+$("fs").addEventListener("click", () => {
+  if (document.fullscreenElement) { document.exitFullscreen && document.exitFullscreen().catch(() => {}); return; }
+  const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  p && p.catch && p.catch(() => { $("fs").hidden = true; });
+});
+document.addEventListener("fullscreenchange", () => { $("fs").textContent = document.fullscreenElement ? "Exit Full Screen" : "Full Screen"; });
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", readTheme); } catch (_) {}
+new MutationObserver(readTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+window.addEventListener("resize", readTheme);
+
+// ---------- start ----------
+readTheme();
+dsBuild("disk");
+wdUnits();
+tgPickSide(); tgUpdate(); lfUpdate(); wdUpdate();
+cvGallery(); cvUpdate();
+roBuild();
+kcDistances(); kcUpdate();
+ftImages(); ftUpdate();
+show(CH.includes(location.hash.slice(1)) ? location.hash.slice(1) : "tang");
+if (window.MathJax && MathJax.startup && MathJax.startup.document && MathJax.typesetPromise) window.__mjReady();
+requestAnimationFrame(function loop() {
+  try { DRAW[cur](); } catch (err) { console.error(err); }
+  requestAnimationFrame(loop);
+});
+})();
+</script></body></html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Explainers | Vision Transformers for Satellite Imagery</title>
+<meta name="description" content="Four interactive explainers from the development of a self supervised foundation model for the MTG FCI geostationary imager.">
+<meta property="og:title" content="How a Vision Transformer Sees a Satellite Image">
+<meta property="og:description" content="Four interactive explainers: gradient descent, high dimensions, attention, positional encoding.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23017BC6'/><circle cx='16' cy='16' r='7' fill='none' stroke='white' stroke-width='2.6'/><circle cx='16' cy='16' r='2.4' fill='white'/></svg>">
+<style>
+:root{
+  --bg:#F4F7FA; --panel:#FFFFFF; --ink:#18202A; --muted:#5A6672; --line:#DCE4EC;
+  --blue:#017BC6; --green:#2E7D12; --plum:#5A1A80; --amber:#B45F00;
+  --ring:rgba(1,123,198,.38);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0E141B; --panel:#161F29; --ink:#E8EEF4; --muted:#94A3B3; --line:#263341;
+         --blue:#3FA9E8; --green:#64B83C; --plum:#B37AD8; --amber:#E39A3C;
+         --ring:rgba(63,169,232,.42); }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Verdana,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:clamp(40px,7vw,78px) 20px 70px}
+
+header{margin-bottom:clamp(30px,5vw,48px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 16px}
+.eyebrow::before{content:"";width:22px;height:2px;background:var(--blue);border-radius:2px}
+h1{font-size:clamp(28px,5.2vw,46px);line-height:1.12;margin:0 0 14px;letter-spacing:-.02em;font-weight:650}
+.sub{color:var(--muted);margin:0;font-size:clamp(15px,2.1vw,18px);max-width:62ch}
+kbd{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid var(--line);
+  border-bottom-width:2px;border-radius:5px;padding:3px 6px;background:var(--panel);color:var(--muted)}
+
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr))}
+a.card{position:relative;display:flex;flex-direction:column;gap:14px;padding:22px;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;
+  text-decoration:none;color:inherit;overflow:hidden;
+  transition:transform .18s cubic-bezier(.2,.7,.3,1),box-shadow .18s,border-color .18s}
+a.card::after{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--accent);
+  opacity:0;transition:opacity .18s}
+a.card:hover,a.card:focus-visible{transform:translateY(-3px);border-color:var(--accent);
+  box-shadow:0 10px 28px rgba(16,32,48,.12)}
+a.card:hover::after,a.card:focus-visible::after{opacity:1}
+a.card:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+.thumb{height:104px;border-radius:9px;background:var(--bg);display:grid;place-items:center;
+  border:1px solid var(--line)}
+.thumb svg{width:100%;height:100%}
+.n{position:absolute;top:16px;right:18px;font:600 12px/1 ui-monospace,Menlo,monospace;
+  color:var(--muted);opacity:.75}
+h2{margin:0;font-size:18.5px;color:var(--accent);letter-spacing:-.01em}
+p.desc{margin:0;color:var(--muted);font-size:14.6px;line-height:1.55}
+.tag{margin-top:auto;font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+footer{margin-top:52px;padding-top:24px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13.8px;display:flex;flex-wrap:wrap;gap:10px 26px}
+footer a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+footer a:hover{color:var(--blue)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">KNMI &middot; MTG FCI foundation model</p>
+  <h1>How a Vision Transformer Sees a Satellite Image</h1>
+  <p class="sub">Four interactive explainers from the development of a self supervised
+    foundation model for a geostationary imager. Each one computes itself as you drag,
+    click and scrub, so you can watch the mechanism rather than read about it.
+    Press <kbd>1</kbd> to <kbd>4</kbd> to open one.</p>
+</header>
+
+<main class="grid" id="grid">
+
+  <a class="card" href="gradient-descent.html" style="--accent:var(--blue)" data-k="1">
+    <span class="n">01</span>
+    <span class="thumb" aria-hidden="true">
+      <svg viewBox="0 0 220 104" fill="none">
+        <ellipse cx="150" cy="52" rx="58" ry="34" stroke="currentColor" stroke-opacity=".16"/>
+        <ellipse cx="150" cy="52" rx="40" ry="23" stroke="currentColor" stroke-opacity=".16"/>
+        <ellipse cx="150" cy="52" rx="23" ry="13" stroke="currentColor" stroke-opacity=".16"/>
+        <path d="M18 18 L52 80 L82 30 L108 68 L128 42 L142 58 L148 50" stroke="var(--blue)"
+              stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="150" cy="52" r="4.6" fill="var(--blue)"/>
+      </svg>
+    </span>
+    <h2>Gradient Descent</h2>
+    <p class="desc">Learning by following the slope. Watch a real descent on a real loss
+      surface, and see what a step size that is too large actually does to it.</p>
+    <span class="tag">the whole of learning, in one update rule</span>
+  </a>
+
+  <a class="card" href="high-dimensions.html" style="--accent:var(--green)" data-k="2">
+    <span class="n">02</span>
+    <span class="thumb" aria-hidden="true">
+      <svg viewBox="0 0 220 104" fill="none">
+        <g stroke="currentColor" stroke-opacity=".14"><path d="M14 86 L96 86 M14 86 L14 18"/></g>
+        <circle cx="55" cy="52" r="30" stroke="var(--amber)" stroke-width="2.2" stroke-dasharray="3 5"/>
+        <circle cx="55" cy="52" r="13" stroke="var(--blue)" stroke-width="2.2"/>
+        <path d="M100 52 L128 52" stroke="currentColor" stroke-opacity=".3" stroke-width="1.6"/>
+        <path d="M122 48 L130 52 L122 56" stroke="currentColor" stroke-opacity=".3" stroke-width="1.6"/>
+        <ellipse cx="176" cy="60" rx="38" ry="13" fill="var(--green)" fill-opacity=".18"
+                 stroke="var(--green)" stroke-width="1.8"/>
+        <circle cx="176" cy="78" r="11" stroke="var(--blue)" stroke-width="2.2"/>
+        <path d="M146 34 a30 12 0 0 0 60 0" stroke="var(--amber)" stroke-width="2.2"/>
+      </svg>
+    </span>
+    <h2>High Dimensions</h2>
+    <p class="desc">Why models lift their data. Two rings that no straight line can ever
+      separate, until you give them one more axis to move into.</p>
+    <span class="tag">the kernel trick you can actually see</span>
+  </a>
+
+  <a class="card" href="attention.html" style="--accent:var(--plum)" data-k="3">
+    <span class="n">03</span>
+    <span class="thumb" aria-hidden="true">
+      <svg viewBox="0 0 220 104" fill="none">
+        <g>
+          <rect x="24" y="16" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".18"/>
+          <rect x="45" y="16" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".62"/>
+          <rect x="66" y="16" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".10"/>
+          <rect x="87" y="16" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".34"/>
+          <rect x="24" y="37" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".86"/>
+          <rect x="45" y="37" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".14"/>
+          <rect x="66" y="37" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".44"/>
+          <rect x="87" y="37" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".22"/>
+          <rect x="24" y="58" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".12"/>
+          <rect x="45" y="58" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".30"/>
+          <rect x="66" y="58" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".74"/>
+          <rect x="87" y="58" width="17" height="17" rx="2.5" fill="var(--plum)" fill-opacity=".18"/>
+        </g>
+        <path d="M112 46 L134 46" stroke="currentColor" stroke-opacity=".3" stroke-width="1.6"/>
+        <path d="M128 42 L136 46 L128 50" stroke="currentColor" stroke-opacity=".3" stroke-width="1.6"/>
+        <g>
+          <rect x="150" y="20" width="13" height="50" rx="3" fill="currentColor" fill-opacity=".10"/>
+          <rect x="150" y="44" width="13" height="26" rx="3" fill="var(--amber)" fill-opacity=".75"/>
+          <rect x="172" y="20" width="13" height="50" rx="3" fill="currentColor" fill-opacity=".10"/>
+          <rect x="172" y="30" width="13" height="40" rx="3" fill="var(--amber)" fill-opacity=".75"/>
+          <rect x="194" y="20" width="13" height="50" rx="3" fill="currentColor" fill-opacity=".10"/>
+          <rect x="194" y="56" width="13" height="14" rx="3" fill="var(--amber)" fill-opacity=".75"/>
+        </g>
+      </svg>
+    </span>
+    <h2>Attention</h2>
+    <p class="desc">From correlation to self attention. A dot product becomes a similarity
+      matrix, then a softmax, then a weighted blend of everyone's values.</p>
+    <span class="tag">score, normalise, mix</span>
+  </a>
+
+  <a class="card" href="positional-encoding.html" style="--accent:var(--amber)" data-k="4">
+    <span class="n">04</span>
+    <span class="thumb" aria-hidden="true">
+      <svg viewBox="0 0 220 104" fill="none" stroke-linecap="round">
+        <path d="M14 30 q13 -15 26 0 t26 0 t26 0 t26 0 t26 0 t26 0 t26 0"
+              stroke="var(--amber)" stroke-width="2.2"/>
+        <path d="M14 56 q26 -18 52 0 t52 0 t52 0 t52 0"
+              stroke="var(--blue)" stroke-width="2.2"/>
+        <path d="M14 82 q52 -20 104 0 t104 0"
+              stroke="var(--green)" stroke-width="2.2"/>
+      </svg>
+    </span>
+    <h2>Positional Encoding</h2>
+    <p class="desc">Teaching a vision transformer where its patches are, given that
+      attention by itself is completely blind to order.</p>
+    <span class="tag">and why we encode metres, not pixel indices</span>
+  </a>
+
+</main>
+
+<footer>
+  <span>Author: <a href="https://github.com/digital-idiot">digital-idiot</a></span>
+  <span>Code <a href="LICENSE">Apache 2.0</a>, text and figures
+    <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  <span>Self contained pages; MathJax, Plotly and fonts load from a CDN, so a network
+    connection is needed.</span>
+</footer>
+</div>
+
+<script>
+// 1-4 opens a demo; arrow keys walk the cards
+(function () {
+  var cards = Array.prototype.slice.call(document.querySelectorAll("a.card"));
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var hit = cards.filter(function (c) { return c.dataset.k === e.key; })[0];
+    if (hit) { e.preventDefault(); location.href = hit.getAttribute("href"); return; }
+    if (e.key === "ArrowRight" || e.key === "ArrowDown" ||
+        e.key === "ArrowLeft"  || e.key === "ArrowUp") {
+      var i = cards.indexOf(document.activeElement);
+      var d = (e.key === "ArrowRight" || e.key === "ArrowDown") ? 1 : -1;
+      e.preventDefault();
+      cards[(Math.max(i, 0) + d + cards.length) % cards.length].focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>

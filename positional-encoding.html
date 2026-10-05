@@ -1,0 +1,1172 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Positional Encoding: Teaching a ViT Where Patches Are</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"><style>:root{--bg:#eef1f5;--surface:#ffffff;--sunk:#f6f8fa;--ink:#15202c;--muted:#5b6878;--line:#d8dee6;--grid:#e8ecf1;--q:#d9480f;--k:#1c6fb0;--v:#0f8a4f;--sc:#7048e8;--neg:#a86a00;--dk:#c2187a;--truth:#0f8a4f;--pt:#4a5868;--eq:#f4f1fb;--eqline:#d9d0f3;--display:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif;--body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0c1116;--surface:#151c24;--sunk:#111820;--ink:#e4eaf0;--muted:#95a3b2;--line:#2b3542;--grid:#202934;--q:#ef6a33;--k:#4a9fe0;--v:#3fb36e;--sc:#9d7cf5;--neg:#d09a2c;--dk:#e0619f;--truth:#40a960;--pt:#a9b6c4;--eq:#1b1d2e;--eqline:#3a3460;color-scheme:dark}}:root[data-theme=dark]{--bg:#0c1116;--surface:#151c24;--sunk:#111820;--ink:#e4eaf0;--muted:#95a3b2;--line:#2b3542;--grid:#202934;--q:#ef6a33;--k:#4a9fe0;--v:#3fb36e;--sc:#9d7cf5;--neg:#d09a2c;--dk:#e0619f;--truth:#40a960;--pt:#a9b6c4;--eq:#1b1d2e;--eqline:#3a3460;color-scheme:dark}*{box-sizing:border-box}[hidden]{display:none!important}html{height:100%;font-size:clamp(13px,.5vw + 7px,18px)}body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.5}h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}p{margin:0}button{font:500 .9rem var(--body);border-radius:.5rem;border:1px solid var(--line);background:var(--sunk);color:var(--ink);padding:.42rem .8rem;cursor:pointer}button:hover:not(:disabled){border-color:var(--muted)}button:disabled{opacity:.45;cursor:not-allowed}button.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}button.on{background:var(--q);border-color:var(--q);color:#fff}.btns button{display:inline-flex;align-items:center;gap:.4rem}.ic{width:.85em;height:.85em;fill:currentColor;flex:none}button.calc{background:var(--sc);border:2px solid var(--sc);color:#fff;font-weight:600;padding:.45rem 1.05rem;box-shadow:0 2px 0 color-mix(in srgb,var(--sc) 55%,#000)}button.calc:hover:not(:disabled){filter:brightness(1.08);border-color:var(--sc)}button.calc.running{background:var(--surface);color:var(--sc);box-shadow:none}button:focus-visible,input:focus-visible,select:focus-visible,[role=tab]:focus-visible,.cell:focus-visible{outline:2px solid var(--k);outline-offset:2px}select{font:.86rem var(--mono);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:.4rem;padding:.25rem .4rem;min-width:0;width:100%}input[type=range]{width:100%;accent-color:var(--q);min-width:0}mjx-container{color:inherit}mjx-container[display=true]{margin:.4em 0!important}.eqcard mjx-container[display=true]{margin:.6em 0!important}.dd{color:var(--dk)}.qq{color:var(--q)}.kk{color:var(--k)}.vv{color:var(--v)}.ss{color:var(--sc)}.nn{color:var(--neg)}g.off,.off{opacity:.18}.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}.top{display:flex;align-items:center;gap:.6rem 1.6rem;flex-wrap:wrap;padding:.55rem 1.2rem;background:var(--surface);border-bottom:1px solid var(--line)}.brand{display:flex;flex-direction:column;margin-right:auto;min-width:0}.brand h1{font-size:1.45rem;font-weight:700;line-height:1.1}.brand span{font:500 .7rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.trail{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}.trail button{border-radius:999px;padding:.24rem .75rem;font:500 .84rem var(--body);background:0 0;color:var(--muted)}.trail button.done{color:var(--ink);border-color:var(--muted)}.trail button.lit{background:var(--ink);color:var(--surface);border-color:var(--ink)}.trail i{color:var(--muted);font-style:normal;font-size:.9rem}#fs{padding:.35rem .6rem;font-size:.84rem}.main{display:grid;grid-template-columns:clamp(290px,24vw,28rem) minmax(0,1fr);min-height:0}.rail{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0;background:var(--surface);border-right:1px solid var(--line)}.rail-body{overflow-y:auto;min-height:0;padding:1rem 1.2rem 1.2rem}.rp{display:flex;flex-direction:column;gap:.8rem}.rp .eyebrow{font:500 .7rem var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.rp h2{font-size:1.4rem;font-weight:700;line-height:1.15}.rp p{font-size:.95rem;max-width:60ch}.eqcard{background:var(--eq);border:1px solid var(--eqline);border-radius:.7rem;padding:.4rem .8rem;font-size:1.02rem;overflow-x:auto;overflow-y:hidden}.row{display:grid;grid-template-columns:6.4rem minmax(0,1fr) 4.4rem;align-items:center;gap:.5rem}.row label{font-size:.86rem;color:var(--muted)}.row output{font:.86rem var(--mono);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.row.wide{grid-template-columns:6.4rem minmax(0,1fr)}.btns{display:flex;flex-wrap:wrap;gap:.5rem}.check{display:flex;gap:.5rem;align-items:center;font-size:.9rem;color:var(--ink);cursor:pointer}.check input{margin:0;accent-color:var(--q)}.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1px solid var(--line);border-radius:.5rem;overflow:hidden;background:var(--sunk);width:100%}.seg label{position:relative;cursor:pointer}.seg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}.seg span{display:block;padding:.3rem .5rem;font:500 .84rem var(--body);color:var(--muted);text-align:center;white-space:nowrap}.seg input:checked+span{background:var(--ink);color:var(--surface)}.seg input:focus-visible+span{outline:2px solid var(--k);outline-offset:-2px}.ro{border-collapse:collapse;width:100%;font:.86rem var(--mono);font-variant-numeric:tabular-nums}.ro th{font:500 .8rem var(--body);color:var(--muted);text-align:right;padding:.2rem .4rem;border-bottom:1px solid var(--line)}.ro td{text-align:right;padding:.22rem .4rem;border-bottom:1px solid var(--grid);white-space:nowrap}.ro th:first-child,.ro td:first-child{text-align:left;color:var(--muted);font-family:var(--body)}.bridge{font-size:.88rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:.7rem}.bridge b{color:var(--ink);font-weight:600}.railnav{border-top:1px solid var(--line);padding:.7rem 1.2rem;display:flex;gap:.5rem;align-items:center;justify-content:space-between;background:var(--surface)}.railnav .keys{font:.66rem var(--mono);color:var(--muted);text-align:center;min-width:0;flex:1}.railnav button{white-space:nowrap;flex:none}.stage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);min-height:0;min-width:0}.vtabs{display:flex;gap:.2rem;padding:.45rem 1rem 0;border-bottom:1px solid var(--line);overflow-x:auto;background:var(--bg)}.vtabs button{border:1px solid transparent;border-bottom:0;border-radius:.5rem .5rem 0 0;background:0 0;color:var(--muted);padding:.45rem .8rem .5rem;white-space:nowrap;display:flex;gap:.45rem;align-items:baseline}.vtabs button kbd{font:.68rem var(--mono);opacity:.8}.vtabs button[aria-selected=true]{background:var(--surface);border-color:var(--line);color:var(--ink);margin-bottom:-1px;padding-bottom:calc(.5rem + 1px)}.views{position:relative;min-height:0;background:var(--surface)}.view{position:absolute;inset:0;display:flex;flex-direction:column;gap:.7rem;padding:.8rem 1.2rem 1rem;min-height:0;min-width:0}.panel{display:flex;flex-direction:column;gap:.35rem;min-height:0;min-width:0;flex:1}.ph{display:flex;align-items:baseline;gap:.4rem 1rem;flex-wrap:wrap}.ph h2{font-size:1.08rem;font-weight:600}.key{display:flex;flex-wrap:wrap;gap:.2rem 1rem;font-size:.84rem;color:var(--muted);align-items:center}.key span{display:inline-flex;align-items:center;gap:.35rem}.sw{width:1.2rem;height:0;border-top:3px solid;display:inline-block}.dot{width:.6rem;height:.6rem;border-radius:50%;display:inline-block}.cv{flex:1;min-height:0;position:relative;overflow:hidden}.cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.ovl{position:absolute;transform:translateY(-50%);pointer-events:none;white-space:nowrap;font-size:1rem;line-height:1}.ovl.r{text-align:right}.pair{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1rem}.pair.wl{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}.stack{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,1.5fr) minmax(0,1fr);gap:.5rem}.stack6{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,.9fr) minmax(0,1.3fr);gap:.8rem}.eqstrip{font-size:1rem;background:var(--eq);border:1px solid var(--eqline);border-radius:.6rem;padding:.35rem .8rem;overflow-x:auto;overflow-y:hidden;white-space:nowrap;min-height:2.6rem;display:flex;align-items:center}.cap{font-size:.84rem;color:var(--muted)}.mmwrap{flex:1;min-height:0;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding-top:.3rem}.mm{--cs:clamp(2.3rem,4.6vh,3.4rem);display:grid;gap:3px;font:.8rem var(--mono);font-variant-numeric:tabular-nums}.mm .cell{display:grid;place-items:center;border-radius:.3rem;background:var(--sunk);color:var(--ink);transition:background .35s,box-shadow .2s,transform .2s,opacity .2s;user-select:none}.mm .cell.s{cursor:pointer;font-size:.86rem}.mm .cell.dim{opacity:.35}.mm .cell.hl{box-shadow:0 0 0 2px var(--ink);transform:scale(1.04);z-index:1}.mm .cell.sel{box-shadow:0 0 0 2.5px var(--ink);z-index:2}.mm .cell.empty{color:transparent}.mm .cell.rmax{box-shadow:inset 0 0 0 2px var(--q)}.mm .lbl{display:flex;align-items:center;font-size:.76rem;color:var(--muted);padding:0 .35rem}.mm .lbl.top{justify-content:center;align-items:flex-end;padding-bottom:.25rem;color:var(--ink);white-space:nowrap;font-size:.72rem}.mm .lbl.tok{justify-content:flex-end;color:var(--ink)}.mm .lbl.hl{color:var(--q);font-weight:600}.mm .lbl.khl{color:var(--k);font-weight:600}.mm .lbl.dimh{justify-content:center;text-align:center;font-size:.66rem;line-height:1.15;padding:.2rem 0}.mm .lbl.side{justify-content:flex-start;font-size:.68rem}.mm .big{display:grid;place-items:center;text-align:center;font-size:1.5rem}.mm .tag{display:grid;place-items:center;font-size:1.05rem}.amat{display:grid;grid-template-columns:auto repeat(5,minmax(0,1fr));gap:2px;font:.76rem var(--mono);font-variant-numeric:tabular-nums}.amat div{text-align:center;padding:.32rem 0;border-radius:3px}.amat .h{color:var(--muted);font-size:.7rem;padding:.15rem 0}.amat .l{text-align:right;color:var(--muted);padding-right:.4rem;cursor:pointer}.amat .l.on{color:var(--q);font-weight:600}.amat .c{cursor:pointer}.amat .c.on{box-shadow:inset 0 0 0 1.5px var(--ink)}.side5{display:flex;flex-direction:column;gap:.6rem;min-width:0;overflow:auto}.chips{display:flex;flex-wrap:wrap;gap:.35rem}.chips button{padding:.25rem .65rem;font:500 .86rem var(--mono)}.chips button[aria-pressed=true]{background:var(--q);border-color:var(--q);color:#fff}.map{border-collapse:collapse;width:100%;font-size:.88rem}.map th{font:500 .72rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:.2rem .4rem;border-bottom:1px solid var(--line)}.map td{padding:.24rem .4rem;border-bottom:1px solid var(--grid)}.map td:first-child{color:var(--muted)}.roles{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.3rem .7rem;align-items:center;font-size:.9rem}.roles .who{font-size:1rem}.zline{font-size:.95rem;line-height:1.9;overflow-x:auto;overflow-y:hidden}@media (prefers-reduced-motion:reduce){.mm .cell{transition:none}}@media (max-width:860px){body{overflow:auto}.app{height:auto}.main{grid-template-columns:minmax(0,1fr)}.rail{border-right:0;border-bottom:1px solid var(--line)}.rail-body{overflow:visible}.views{height:auto}.view{position:relative;inset:auto;min-height:0}.pair,.pair.wl{grid-template-columns:minmax(0,1fr);grid-auto-rows:20rem}.stack{grid-template-rows:20rem 13rem}.stack6{grid-template-rows:15rem auto}.stack6 .pair{grid-auto-rows:19rem}.panel{min-height:14rem}.mmwrap{justify-content:flex-start}}
+.note{font-size:.86rem;color:var(--muted)}
+.row input[type=range]:disabled{opacity:.4}
+.rp h3.eyebrow{margin-top:.2rem}
+.trail button:disabled{opacity:1}
+</style></head><body><div class="app"><header class="top"><div class="brand"><h1>Positional Encoding: Teaching a ViT Where Patches Are</h1><span>Seven encodings, from raster index to 2‑D RoPE</span></div><nav class="trail" id="trail" aria-label="The story"><button data-g="0">Order</button><i>→</i><button data-g="1">Absolute</button><i>→</i><button data-g="2">Frequencies</button><i>→</i><button data-g="3">Relative</button><i>→</i><button data-g="4">Rotation</button></nav><button id="fs" title="Full screen">Full Screen</button></header><div class="main"><aside class="rail"><div class="rail-body">
+
+<section class="rp" id="r-order"><span class="eyebrow">1 of 7 · Order</span><h2>A vision transformer sees a bag of patches</h2><p>ViT cuts the image into patches and attends from every patch to every other. Nothing in \(QK^\top\) says <i>where</i> a patch was. Rearrange the patches and every output is the same, only rearranged.</p><div class="eqcard">\[ \text{Attn}(PX)=P\,\text{Attn}(X) \] \[ P:\ \text{any permutation of the patches} \]</div><p>Scramble the patches: the <b>sun</b> patch gets exactly the same output vector, wherever it lands. The two plain <b>sky</b> patches, and the two plain <b>lawn</b> patches, are indistinguishable too.</p><div class="btns"><button id="oShuf" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Scramble</span></button><button id="oReset">Reset</button></div><label class="check"><input id="oPE" type="checkbox"> Add a position embedding \(x_{r,c}=e_{r,c}+p_{r,c}\)</label><p class="note">Hover a patch or a row to follow it across both images.</p><p class="bridge">Turn the embedding on and the outputs split apart. So <b>how</b> should we write a patch's position into a vector? Start with the obvious: number the patches.</p></section>
+
+<section class="rp" id="r-abs" hidden><span class="eyebrow">2 of 7 · Absolute</span><h2>Number the patches, or learn a vector for each</h2><p>Each patch position gets a vector \(p_{r,c}\), added to the patch embedding. Two obvious choices, two different failures.</p><div class="eqcard">\[ x_{r,c}=e_{r,c}+p_{r,c} \]</div><div class="seg" role="radiogroup" aria-label="Method"><label><input type="radio" name="aM" value="int" checked><span>Raster index</span></label><label><input type="radio" name="aM" value="learn"><span>Learned table (ViT)</span></label></div><div class="eqcard" id="aRule"></div><div class="row"><label for="aG">Grid</label><input id="aG" type="range" min="4" max="24" step="1" value="14"><output id="aGO"></output></div><label class="check" id="aIL"><input id="aI" type="checkbox" checked> Resize the trained 14×14 table to fit</label><div class="btns"><button id="aGrow" class="primary">Grow the resolution</button><button id="aReset">Reset</button></div><p class="note" id="aNote"></p><p class="note">Click a patch on the image to probe it.</p><p class="bridge">We want a code that is <b>bounded</b>, works at <b>any resolution</b>, and keeps <b>neighbours close</b>. Start with one axis: number the pixel columns in binary.</p></section>
+
+<section class="rp" id="r-bits" hidden><span class="eyebrow">3 of 7 · Frequencies</span><h2>Count in binary, then smooth the bits into waves</h2><p>Take one axis of the image: pixel column \(t=0,1,2,\ldots\) In binary, the lowest bit flips every column, the next every 2 steps, the next every 4. Each bit is a square wave with its own frequency: a bounded code for any position.</p><div class="eqcard">\[ b_i(t)=\Big\lfloor \tfrac{t}{2^i}\Big\rfloor \bmod 2 \quad\text{period } 2^{i+1} \] \[ \text{smooth: } \sin(\omega_i t),\ \cos(\omega_i t),\quad \omega_i=\pi/2^i \]</div><div class="seg" role="radiogroup" aria-label="Code"><label><input type="radio" name="bM" value="bin" checked><span>Binary bits</span></label><label><input type="radio" name="bM" value="sin"><span>Sine only</span></label><label><input type="radio" name="bM" value="sc"><span>Sine + cosine</span></label></div><div class="row"><label for="bT">Column \(t\)</label><input id="bT" type="range" min="0" max="62" step="1" value="0"><output id="bTO"></output></div><div class="btns"><button id="bPlay" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Count</span></button><button id="bPrev" title="Previous column (←)"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M12 2.5v11L4.5 8zM2 2.5h2.5v11H2z"/></svg><span>t − 1</span></button><button id="bNext" title="Next column (→)"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11L11.5 8zM12 2.5h2.5v11H12z"/></svg><span>t + 1</span></button></div><div class="btns"><button id="b31">Jump to 31</button><button id="bReset">Reset</button></div><p class="note">Step with the buttons or the ← → keys. Watch the bits as you cross 7 → 8, 15 → 16 and 31 → 32.</p><p class="bridge">Binary jumps: 31 → 32 flips <b>six</b> bits, so neighbouring columns can look far apart. Sines are smooth but still uneven. A <b>sine + cosine pair</b> is a point on a circle, and each step turns it by the same angle: every neighbour is the same distance away. That is the transformer's sinusoidal encoding.</p></section>
+
+<section class="rp" id="r-sin" hidden><span class="eyebrow">4 of 7 · Sinusoidal</span><h2>Sine and cosine at many frequencies</h2><p>Use \(d/2\) clock hands, each turning at its own speed, from one turn every \(2\pi\) columns down to one every \(2\pi\cdot\text{base}\). For images, DETR and MAE encode a patch at \((x,y)\) as \([\,p_x,\ p_y\,]\): half the channels for the column, half for the row.</p><div class="eqcard">\[ p_{t,2i}=\sin(\omega_i t),\quad p_{t,2i+1}=\cos(\omega_i t) \] \[ \omega_i=\text{base}^{-2i/d} \]</div><div class="eqcard"><span class="eyebrow">The relative property</span>\[ \begin{pmatrix}\sin\omega(t{+}k)\\ \cos\omega(t{+}k)\end{pmatrix}=R(\omega k)\begin{pmatrix}\sin\omega t\\ \cos\omega t\end{pmatrix} \] \[ R(\alpha)=\begin{pmatrix}\cos\alpha & \sin\alpha\\ -\sin\alpha & \cos\alpha\end{pmatrix} \] \[ p_t\cdot p_{t+k}=\textstyle\sum_i \cos(\omega_i k) \]</div><div class="row"><label for="sD">Width \(d\)</label><input id="sD" type="range" min="8" max="128" step="8" value="64"><output id="sDO"></output></div><div class="row"><label for="sB">Base</label><input id="sB" type="range" min="1" max="5" step="0.5" value="4"><output id="sBO"></output></div><div class="row"><label for="sT">Column \(t\)</label><input id="sT" type="range" min="0" max="99" step="1" value="20"><output id="sTO"></output></div><div class="row"><label for="sK">Offset \(k\)</label><input id="sK" type="range" min="-40" max="40" step="1" value="6"><output id="sKO"></output></div><div class="btns"><button id="sPlay" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Run the clock</span></button><button id="sReset">Reset</button></div><p class="bridge">Moving by \(k\) turns every hand by a fixed angle, whatever \(t\) is. The similarity of two positions depends only on their <b>distance</b>. Next: the same trick for 2‑D coordinates.</p></section>
+
+<section class="rp" id="r-ff" hidden><span class="eyebrow">5 of 7 · Fourier features</span><h2>For space: plane waves in random directions</h2><p>Images, maps and 3‑D scenes (NeRF) have continuous coordinates. Project the coordinate onto many frequency vectors \(b_j\) and take sine and cosine. Each feature is a plane wave across the space.</p><div class="eqcard">\[ \gamma(v)=\tfrac{1}{\sqrt m}\big[\cos 2\pi Bv,\ \sin 2\pi Bv\big] \] \[ \gamma(v)\cdot\gamma(u)=\tfrac1m\textstyle\sum_j\cos\big(2\pi\, b_j\cdot(v-u)\big) \]</div><div class="seg" role="radiogroup" aria-label="Frequencies"><label><input type="radio" name="fM" value="gauss" checked><span>Random \(b_j\sim\mathcal N(0,\sigma^2)\)</span></label><label><input type="radio" name="fM" value="axis"><span>Axis \(2^l\)</span></label></div><div class="row"><label for="fS">Scale \(\sigma\)</label><input id="fS" type="range" min="1" max="24" step="0.5" value="3"><output id="fSO"></output></div><div class="row"><label for="fMm">Features \(m\)</label><input id="fMm" type="range" min="2" max="256" step="2" value="128"><output id="fMmO"></output></div><div class="btns"><button id="fNew" class="primary">Draw new \(B\)</button><button id="fReset">Reset</button></div><p class="note" id="fNote"></p><p class="bridge">The similarity depends only on \(v-u\): it is shift‑invariant again. \(\sigma\) sets how fine a detail the network can resolve. Next: Swin drops the vectors and puts 2‑D offsets <b>directly into the attention scores</b>.</p></section>
+
+<section class="rp" id="r-rel" hidden><span class="eyebrow">6 of 7 · Relative</span><h2>Swin: a learned bias for every 2‑D offset</h2><p>Swin attends inside \(M\times M\) windows. Each head learns one small table \(\hat B\) holding a bias for each offset \((\Delta r,\Delta c)\). Every query reads the same table, shifted to sit on itself.</p><div class="eqcard">\[ \text{Attn}=\operatorname{softmax}\!\Big(\frac{QK^\top}{\sqrt d}+B\Big)V \] \[ B_{ij}=\hat B\big[\Delta r_{ij}+M-1,\ \Delta c_{ij}+M-1\big] \] \[ \hat B\in\mathbb{R}^{(2M-1)\times(2M-1)}\ \text{per head} \]</div><div class="row"><label for="rH">Head</label><input id="rH" type="range" min="1" max="4" step="1" value="1"><output id="rHO"></output></div><div class="row"><label for="rM">Window \(M\)</label><input id="rM" type="range" min="3" max="9" step="1" value="7"><output id="rMO"></output></div><div class="btns"><button id="rScan" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Scan queries</span></button><button id="rNew">New content</button><button id="rReset">Reset</button></div><p class="note">Click a patch in the window to make it the query. The four head tables are illustrative shapes; trained Swin heads show similar local, horizontal and vertical preferences.</p><p class="bridge">In Swin's ablations this bias beat absolute embeddings on ImageNet, COCO and ADE20K. It only touches the scores, though. Next: put relative position inside \(q\cdot k\) itself, by rotating.</p></section>
+
+<section class="rp" id="r-rope" hidden><span class="eyebrow">7 of 7 · RoPE</span><h2>2‑D RoPE: rotate \(q\) and \(k\) by column and row</h2><p>Rotary embeddings turn each 2‑D pair of \(q\) and \(k\) by an angle set by the patch position. Axial 2‑D RoPE uses half the pairs for the column \(x\), half for the row \(y\). A dot product only sees the angle <i>between</i> them, so only the offset survives.</p><div class="eqcard">\[ R(\alpha)=\begin{pmatrix}\cos\alpha&-\sin\alpha\\ \sin\alpha&\cos\alpha\end{pmatrix} \] \[ \tilde q=\begin{pmatrix}R(x\theta)&\\&R(y\theta)\end{pmatrix}q \] \[ \tilde q^{\top}\tilde k=q^{\top}\begin{pmatrix}R(\Delta x\,\theta)&\\&R(\Delta y\,\theta)\end{pmatrix}k \]</div><div class="seg" role="radiogroup" aria-label="Encoding"><label><input type="radio" name="pM" value="rope" checked><span>Rotate (RoPE)</span></label><label><input type="radio" name="pM" value="add"><span>Add (sin‑cos)</span></label></div><h3 class="eyebrow">Query patch</h3><div class="row"><label for="pqx">column \(x\)</label><input id="pqx" type="range" min="0" max="31" step="1" value="6"><output id="pqxO"></output></div><div class="row"><label for="pqy">row \(y\)</label><input id="pqy" type="range" min="0" max="31" step="1" value="12"><output id="pqyO"></output></div><h3 class="eyebrow">Key patch (or click the map)</h3><div class="row"><label for="pkx">column \(x\)</label><input id="pkx" type="range" min="0" max="31" step="1" value="10"><output id="pkxO"></output></div><div class="row"><label for="pky">row \(y\)</label><input id="pky" type="range" min="0" max="31" step="1" value="9"><output id="pkyO"></output></div><div class="row"><label for="pP">Pair \(i\)</label><input id="pP" type="range" min="0" max="7" step="1" value="0"><output id="pPO"></output></div><div class="row"><label for="pB">Base</label><input id="pB" type="range" min="1" max="4" step="0.5" value="2"><output id="pBO"></output></div><div class="btns"><button id="pShift" class="calc"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg><span>Slide both right</span></button><button id="pReset">Reset</button></div><p class="bridge">Heo et al. (2024) brought RoPE to ViTs; EVA‑02 and DINOv3 use it. A model trained at 224 px can run at 512 px: unseen positions are just larger angles, with no table to resize. Learnable, mixed frequencies (RoPE‑Mixed) also let a head attend along diagonals.</p></section>
+
+</div><div class="railnav"><button id="prev">← Previous</button><span class="keys">1–7 chapters · Space play</span><button id="next" class="primary">Next →</button></div></aside><section class="stage"><div class="vtabs" role="tablist" aria-label="Chapters"><button role="tab" class="vtab" data-v="order"><kbd>1</kbd>Order</button><button role="tab" class="vtab" data-v="abs"><kbd>2</kbd>Absolute</button><button role="tab" class="vtab" data-v="bits"><kbd>3</kbd>Bits to Waves</button><button role="tab" class="vtab" data-v="sin"><kbd>4</kbd>Sinusoidal</button><button role="tab" class="vtab" data-v="ff"><kbd>5</kbd>Fourier Features</button><button role="tab" class="vtab" data-v="rel"><kbd>6</kbd>Swin Bias</button><button role="tab" class="vtab" data-v="rope"><kbd>7</kbd>2‑D RoPE</button></div><div class="views">
+
+<section class="view" id="v-order" role="tabpanel"><div class="pair"><div class="panel"><div class="ph"><h2>Image 1 · as photographed</h2><span class="cap">rows: query patches · columns: key patches</span></div><div class="cv"><canvas id="cvO1" aria-label="Patches, attention weights and outputs for image 1"></canvas></div></div><div class="panel"><div class="ph"><h2>Image 2 · patches rearranged</h2><span class="cap">dashed: the same patch's output in the other image</span></div><div class="cv"><canvas id="cvO2" aria-label="Patches, attention weights and outputs for image 2"></canvas></div></div></div><div class="key"><span>cells: attention weight \(a_{ij}\)</span><span><i class="sw" style="border-color:var(--v);border-top-width:6px"></i>output \(o_i=\sum_j a_{ij}v_j\) (4 dims)</span><span><i class="sw" style="border-color:var(--ink);border-top-style:dashed"></i>same patch, other image</span></div><div class="eqstrip" id="oEq"></div></section>
+
+<section class="view" id="v-abs" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2 id="aT1"></h2><span class="cap" id="aC1"></span></div><div class="key" id="aK1"></div><div class="cv"><canvas id="cvA1" aria-label="Image patch grid coloured by position code"></canvas></div></div><div class="panel"><div class="ph"><h2 id="aT2"></h2><span class="cap" id="aC2"></span></div><div class="cv"><canvas id="cvA2" aria-label="Why this method fails"></canvas></div></div></div><div class="eqstrip" id="aEq"></div></section>
+
+<section class="view" id="v-bits" role="tabpanel" hidden><div class="stack" style="grid-template-rows:minmax(0,1.6fr) minmax(0,1fr)"><div class="panel"><div class="ph"><h2 id="bT1">Each dimension is a wave</h2><span class="cap">x‑axis: pixel column 0 … 63 · purple line: the current column</span></div><div class="cv"><canvas id="cvB1" aria-label="Each dimension of the code across positions"></canvas></div></div><div class="panel"><div class="ph"><h2>How far is column \(t+1\) from \(t\)?</h2><span class="cap">\(\lVert p_{t+1}-p_t\rVert/\sqrt{D}\)</span></div><div class="key"><span><i class="sw" style="border-color:var(--neg)"></i>binary</span><span><i class="sw" style="border-color:var(--k)"></i>sine only</span><span><i class="sw" style="border-color:var(--sc)"></i>sine + cosine</span></div><div class="cv"><canvas id="cvB2" aria-label="Distance between neighbouring positions"></canvas></div></div></div><div class="eqstrip" id="bEq"></div></section>
+
+<section class="view" id="v-sin" role="tabpanel" hidden><div class="stack6"><div class="panel"><div class="ph"><h2>Encoding matrix: columns × channels</h2><span class="cap">top rows turn fast, bottom rows slowly · purple: \(t\), orange: \(t+k\)</span></div><div class="cv"><canvas id="cvS1" aria-label="Sinusoidal encoding matrix"></canvas></div></div><div class="pair"><div class="panel"><div class="ph"><h2>Each pair is a clock hand</h2><span class="cap">\((\cos\omega_i t,\ \sin\omega_i t)\) for 8 of the \(d/2\) pairs</span></div><div class="key"><span><i class="sw" style="border-color:var(--sc)"></i>\(t\)</span><span><i class="sw" style="border-color:var(--q)"></i>\(t+k\)</span><span><i class="sw" style="border-color:var(--muted)"></i>turn \(\omega_i k\), same for every \(t\)</span></div><div class="cv"><canvas id="cvS2" aria-label="Clock dials for frequency pairs"></canvas></div></div><div class="panel"><div class="ph"><h2>Similarity \(p_t\cdot p_{t+k}\,/\,(d/2)\)</h2><span class="cap">as a function of the offset \(k\)</span></div><div class="key"><span><i class="sw" style="border-color:var(--sc)"></i>measured from \(t\)</span><span><i class="sw" style="border-color:var(--q);border-top-style:dashed"></i>measured from \(t+37\)</span></div><div class="cv"><canvas id="cvS3" aria-label="Dot product between positions by offset"></canvas></div></div></div></div><div class="eqstrip" id="sEq"></div></section>
+
+<section class="view" id="v-ff" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2>Similarity to the point \(v\)</h2><span class="cap">drag the marker · unit square</span></div><div class="key"><span><i class="dot" style="background:var(--q)"></i>similar</span><span><i class="dot" style="background:var(--k)"></i>anti‑similar</span></div><div class="cv"><canvas id="cvF1" aria-label="Kernel similarity across the unit square"></canvas></div></div><div class="panel"><div class="ph"><h2>Features \(\cos(2\pi\,b_j\cdot u)\)</h2><span class="cap">the first 8 of the frequency vectors</span></div><div class="cv"><canvas id="cvF2" aria-label="Individual Fourier feature maps"></canvas></div></div></div><div class="eqstrip" id="fEq"></div></section>
+
+<section class="view" id="v-rel" role="tabpanel" hidden><div class="pair"><div class="panel"><div class="ph"><h2>One \(M\times M\) window: bias from the query patch</h2><span class="cap">click a patch to pick the query</span></div><div class="key"><span><i class="dot" style="background:var(--q)"></i>bonus</span><span><i class="dot" style="background:var(--k)"></i>penalty</span><span>numbers: \(b\) for each key patch</span></div><div class="cv"><canvas id="cvR1" aria-label="Bias of each key patch for the selected query patch"></canvas></div></div><div class="stack" style="grid-template-rows:minmax(0,1.1fr) minmax(0,1fr)"><div class="panel"><div class="ph"><h2>The head's table \(\hat B\)</h2><span class="cap">outlined: the \(M\times M\) slice this query reads</span></div><div class="cv"><canvas id="cvR2" aria-label="Relative position bias table"></canvas></div></div><div class="panel"><div class="ph"><h2 id="rT3">Attention of the query</h2></div><div class="cv"><canvas id="cvR3" aria-label="Attention weights with and without bias"></canvas></div></div></div></div><div class="eqstrip" id="rEq"></div></section>
+
+<section class="view" id="v-rope" role="tabpanel" hidden><div class="pair wl" style="grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)"><div class="panel"><div class="ph"><h2 id="pT1"></h2><span class="cap">drag the tips</span></div><div class="key" id="pKey"></div><div class="cv"><canvas id="cvP1" aria-label="Query and key pair rotated by position"></canvas></div></div><div class="stack" style="grid-template-rows:minmax(0,1.3fr) minmax(0,1fr)"><div class="panel"><div class="ph"><h2>Score of the query against every key patch</h2><span class="cap">32×32 patch grid · ring: query · square: key</span></div><div class="cv"><canvas id="cvP2" aria-label="Score map over key patch positions"></canvas></div></div><div class="panel"><div class="ph"><h2>Slide both patches right by \(s\)</h2><span class="cap">same offset, new place in the image</span></div><div class="key"><span><i class="sw" style="border-color:var(--sc)"></i>rotate (RoPE)</span><span><i class="sw" style="border-color:var(--q)"></i>add (sin‑cos)</span></div><div class="cv"><canvas id="cvP3" aria-label="Score when both patches slide"></canvas></div></div></div></div><div class="eqstrip" id="pEq"></div></section>
+
+</div></section></div></div>
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},svg:{fontCache:"global"},options:{enableMenu:!1},startup:{typeset:!1,ready(){MathJax.startup.defaultReady(),MathJax.startup.promise.then(()=>{window.__mjReady&&window.__mjReady()})}}};</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async></script><script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id);
+const RM = matchMedia("(prefers-reduced-motion: reduce)");
+const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
+const BODY = '"IBM Plex Sans", system-ui, -apple-system, sans-serif';
+const C = {};
+let FS = 12, themeV = 0;
+
+// ---------- utilities ----------
+function readTheme() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const n of ["bg", "surface", "sunk", "ink", "muted", "line", "grid", "q", "k", "v", "sc", "neg", "dk"])
+    C[n] = cs.getPropertyValue("--" + n).trim() || "#888888";
+  FS = Math.round(12 * (parseFloat(cs.fontSize) || 15) / 15 * 10) / 10;
+  themeV++;
+}
+const hex = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
+const rgba = (h, a) => { const [r, g, b] = hex(h); return `rgba(${r},${g},${b},${a})`; };
+const css = a => `rgb(${a[0]},${a[1]},${a[2]})`;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const now = () => performance.now();
+const fmt = (x, p = 2) => isFinite(x) ? (x < 0 && Math.abs(x) >= .5 * Math.pow(10, -p) ? "−" : "") + Math.abs(x).toFixed(p) : "—";
+const tf = (x, p = 2) => (x < 0 && Math.abs(x) >= .5 * Math.pow(10, -p) ? "-" : "") + Math.abs(x).toFixed(p);
+const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0);
+const norm = a => Math.sqrt(dot(a, a));
+function num(v) {
+  const a = Math.abs(v);
+  if (a < 1e-9) return "0";
+  return (a >= 10 ? v.toFixed(0) : a >= 1 ? v.toFixed(1).replace(/\.0$/, "") : v.toFixed(2).replace(/0$/, "")).replace("-", "−");
+}
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+function gauss(r) { let u = 0; while (u === 0) u = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * r()); }
+function softmax(a) {
+  const m = Math.max(...a.filter(isFinite));
+  const e = a.map(x => isFinite(x) ? Math.exp(x - m) : 0), s = e.reduce((p, x) => p + x, 0);
+  return e.map(x => x / s);
+}
+function divRGB(v) {
+  v = clamp(v, -1, 1);
+  const z = hex(C.surface), e = hex(v < 0 ? C.k : C.q), t = Math.pow(Math.abs(v), .85);
+  return z.map((c, i) => Math.round(c + (e[i] - c) * t));
+}
+const VIR = [[68,1,84],[71,44,122],[59,81,139],[44,113,142],[33,144,141],[39,173,129],[92,200,99],[170,220,50],[253,231,37]];
+function virRGB(t) {
+  t = clamp(t, 0, 1) * (VIR.length - 1);
+  const i = Math.min(VIR.length - 2, Math.floor(t)), f = t - i;
+  return VIR[i].map((c, j) => Math.round(c + (VIR[i + 1][j] - c) * f));
+}
+function setText(id, s) { const e = $(id); if (e && e.textContent !== s) e.textContent = s; }
+
+// ---------- canvas ----------
+function fit(cv) {
+  const r = cv.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+  const W = Math.max(1, Math.round(r.width * d)), H = Math.max(1, Math.round(r.height * d));
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+  ctx.clearRect(0, 0, r.width, r.height);
+  return { ctx, w: r.width, h: r.height };
+}
+function text(ctx, s, x, y, color, align = "left", base = "alphabetic", size = FS, weight = 500, font = MONO) {
+  ctx.font = `${weight} ${size}px ${font}`; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = base; ctx.fillText(s, x, y);
+}
+function line(ctx, x1, y1, x2, y2, color, w = 1, dash = null) {
+  ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]);
+}
+function arrow(ctx, x1, y1, x2, y2, color, w) {
+  const a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1), hd = Math.min(14, .45 * L);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(a) * hd * .7, y2 - Math.sin(a) * hd * .7); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - hd * Math.cos(a - .42), y2 - hd * Math.sin(a - .42));
+  ctx.lineTo(x2 - hd * Math.cos(a + .42), y2 - hd * Math.sin(a + .42));
+  ctx.closePath(); ctx.fill(); ctx.lineCap = "butt";
+}
+function polyline(ctx, pts, color, w = 2, dash = null) {
+  if (!pts.length) return;
+  ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.lineJoin = "round";
+  ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke(); ctx.setLineDash([]);
+}
+function hatch(ctx, x, y, w, h) {
+  if (w <= 0 || h <= 0) return;
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+  ctx.fillStyle = C.sunk; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.beginPath();
+  for (let s = -h; s < w; s += 8) { ctx.moveTo(x + s, y + h); ctx.lineTo(x + s + h, y); }
+  ctx.stroke(); ctx.restore();
+}
+function niceTicks(lo, hi, n = 5) {
+  const span = hi - lo; if (span <= 0) return [lo];
+  const raw = span / n, p = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(x => x * p).find(x => x >= raw) || 10 * p;
+  const out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(Math.round(v * 1e6) / 1e6);
+  return out;
+}
+function frame(ctx, box, xr, yr, o = {}) {
+  const X = v => box.x + (v - xr[0]) / (xr[1] - xr[0]) * box.w;
+  const Y = v => box.y + box.h - (v - yr[0]) / (yr[1] - yr[0]) * box.h;
+  for (const v of (o.yt || niceTicks(yr[0], yr[1], o.ny || 4))) {
+    line(ctx, box.x, Y(v), box.x + box.w, Y(v), C.grid, 1);
+    text(ctx, num(v), box.x - 6, Y(v), C.muted, "right", "middle", FS * .9);
+  }
+  for (const v of (o.xt || niceTicks(xr[0], xr[1], o.nx || 6))) {
+    line(ctx, X(v), box.y + box.h, X(v), box.y + box.h + 4, C.line, 1);
+    text(ctx, num(v), X(v), box.y + box.h + 6, C.muted, "center", "top", FS * .9);
+  }
+  line(ctx, box.x, box.y + box.h, box.x + box.w, box.y + box.h, C.line, 1);
+  if (yr[0] < 0 && yr[1] > 0) line(ctx, box.x, Y(0), box.x + box.w, Y(0), C.muted, 1);
+  if (o.xl) text(ctx, o.xl, box.x + box.w, box.y + box.h + FS * 2.2, C.muted, "right", "top", FS * .9, 500, BODY);
+  if (o.yl) text(ctx, o.yl, box.x - FS * 2.6, box.y - FS * .7, C.muted, "left", "bottom", FS * .9, 500, BODY);
+  return { X, Y };
+}
+const stdBox = (w, h, l = 3.4, r = 1.2, t = 1.8, b = 3.4) => ({ x: FS * l, y: FS * t, w: Math.max(10, w - FS * (l + r)), h: Math.max(10, h - FS * (t + b)) });
+const heatCache = new Map();
+function heatImg(key, cols, rows, fn) {
+  const k = key + "|" + themeV;
+  let c = heatCache.get(k);
+  if (c) return c;
+  c = document.createElement("canvas"); c.width = cols; c.height = rows;
+  const x = c.getContext("2d"), im = x.createImageData(cols, rows);
+  for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) {
+    const v = fn(r, q), i = 4 * (r * cols + q);
+    if (v) { im.data[i] = v[0]; im.data[i + 1] = v[1]; im.data[i + 2] = v[2]; im.data[i + 3] = 255; }
+  }
+  x.putImageData(im, 0, 0);
+  if (heatCache.size > 80) heatCache.clear();
+  heatCache.set(k, c);
+  return c;
+}
+function drawImg(ctx, img, x, y, w, h, smooth = false) { ctx.imageSmoothingEnabled = smooth; ctx.drawImage(img, x, y, w, h); ctx.imageSmoothingEnabled = true; }
+function localXY(cv, e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+
+// ---------- MathJax ----------
+const TX = { ready: false, chain: Promise.resolve(), pend: new Map(), timer: 0 };
+function typeset(els) {
+  if (!TX.ready) return;
+  els = els.filter(e => e && e.offsetParent !== null);
+  if (!els.length) return;
+  TX.chain = TX.chain.then(() => { MathJax.typesetClear(els); return MathJax.typesetPromise(els); }).catch(() => {});
+}
+function setTex(el, src, lazy) {
+  if (!el) return;
+  if (lazy) {
+    // always queue: an older pending value must never win over the latest one
+    TX.pend.set(el, src);
+    if (!TX.timer) TX.timer = setTimeout(() => { TX.timer = 0; const p = [...TX.pend]; TX.pend.clear(); for (const [e, s] of p) setTex(e, s); }, 90);
+    return;
+  }
+  TX.pend.delete(el);
+  if (el._src === src) return;
+  el._src = src; el.innerHTML = src; typeset([el]);
+}
+function typesetVisible() {
+  if (!TX.ready) return;
+  const els = [document.querySelector(".rp:not([hidden])"), document.querySelector(".view:not([hidden])")].filter(Boolean);
+  TX.chain = TX.chain.then(() => MathJax.typesetPromise(els)).catch(() => {});
+}
+window.__mjReady = () => { if (!TX.ready) { TX.ready = true; typesetVisible(); } };
+
+// =====================================================================
+// shared image: a small procedural scene used under the patch grids
+// =====================================================================
+const SCENE = (() => {
+  const c = document.createElement("canvas"); c.width = c.height = 360;
+  const x = c.getContext("2d");
+  const g = x.createLinearGradient(0, 0, 0, 230); g.addColorStop(0, "#5fa8ef"); g.addColorStop(1, "#cfe8ff");
+  x.fillStyle = g; x.fillRect(0, 0, 360, 240);
+  x.fillStyle = "#ffd43b"; x.beginPath(); x.arc(290, 66, 32, 0, 7); x.fill();
+  x.fillStyle = "rgba(255,255,255,.9)";
+  for (const [cx, cy, r] of [[70, 58, 18], [92, 50, 22], [116, 60, 16], [180, 96, 14], [198, 90, 18], [216, 98, 12]]) { x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); }
+  x.fillStyle = "#7d8fa6"; x.beginPath();
+  x.moveTo(0, 232); x.lineTo(60, 150); x.lineTo(130, 222); x.lineTo(205, 128); x.lineTo(300, 222); x.lineTo(360, 168); x.lineTo(360, 250); x.lineTo(0, 250); x.fill();
+  x.fillStyle = "#6fbf4f"; x.fillRect(0, 232, 360, 128);
+  x.fillStyle = "#5aa83d"; x.fillRect(0, 300, 360, 60);
+  x.fillStyle = "#d9c3a0"; x.beginPath(); x.moveTo(108, 292); x.lineTo(132, 292); x.lineTo(160, 360); x.lineTo(84, 360); x.fill();
+  x.fillStyle = "#e8b07c"; x.fillRect(56, 190, 128, 102);
+  x.fillStyle = "#b5523b"; x.beginPath(); x.moveTo(44, 192); x.lineTo(120, 136); x.lineTo(196, 192); x.fill();
+  x.fillStyle = "#8b5a2b"; x.fillRect(105, 242, 30, 50);
+  x.fillStyle = "#4dabf7"; x.fillRect(72, 206, 26, 26); x.fillRect(142, 206, 26, 26);
+  x.fillStyle = "#7a4a24"; x.fillRect(262, 212, 14, 64);
+  x.fillStyle = "#3f8f3a"; x.beginPath(); x.arc(269, 196, 38, 0, 7); x.fill();
+  return c;
+})();
+function drawScene(ctx, x, y, s, alpha = 1) { ctx.globalAlpha = alpha; ctx.imageSmoothingEnabled = true; ctx.drawImage(SCENE, x, y, s, s); ctx.globalAlpha = 1; }
+function outline(ctx, x, y, w, h) {
+  ctx.lineWidth = 4; ctx.strokeStyle = "#ffffff"; ctx.strokeRect(x, y, w, h);
+  ctx.lineWidth = 2; ctx.strokeStyle = "#15202c"; ctx.strokeRect(x, y, w, h);
+}
+
+// =====================================================================
+// 1. Order: attention over patches is permutation-equivariant
+// =====================================================================
+const OR = {
+  S1: ["sky", "sky", "sun", "field", "house", "tree", "lawn", "path", "lawn"],
+  E: {
+    sky: [.2, -.1, .9, .1], sun: [1, .6, -.2, .3], field: [-.3, 1, .1, -.8], house: [.9, -.7, 0, .5],
+    tree: [-.6, -.4, -.5, .7], lawn: [-.1, .9, .4, -.6], path: [.4, .3, -.9, -.2]
+  },
+  Wq: [[1.2, .3, 0, .5], [.1, 1.1, .4, 0], [.6, 0, 1.2, .3], [0, -.5, .2, 1.1]],
+  Wk: [[1, 0, .4, .2], [.3, 1.2, 0, -.4], [0, .3, 1, .5], [.4, 0, -.3, 1.2]],
+  Wv: [[1, .2, -.3, 0], [0, 1, .2, .4], [.3, -.2, 1, 0], [-.2, .4, 0, 1]],
+  START: [0, 1, 4, 3, 2, 5, 6, 7, 8],
+  ord: [0, 1, 4, 3, 2, 5, 6, 7, 8], prev: null, pe: false, hov: 2, t0: -1e9, res: [null, null], geo: [null, null]
+};
+const vm = (x, W) => W[0].map((_, j) => x.reduce((s, xi, i) => s + xi * W[i][j], 0));
+const rc3 = t => [Math.floor(t / 3), t % 3];
+const orPE = t => { const [r, c] = rc3(t); return [Math.sin(c), Math.cos(c), Math.sin(r), Math.cos(r)].map(x => .9 * x); };
+// Each patch type is a crop of one scene, drawn in grid units (3 × 3, one unit per patch).
+// Both sky patches and both plain lawn patches are pixel-identical crops.
+const OR_HOME = { sky: [0, 0], sun: [0, 2], field: [1, 0], house: [1, 1], tree: [1, 2], lawn: [2, 0], path: [2, 1] };
+function drawPatch(ctx, type, x, y, s) {
+  const [hr, hc] = OR_HOME[type], X = u => x + (u - hc) * s, Y = v => y + (v - hr) * s, L = v => v * s;
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, s, s); ctx.clip();
+  const HZ = 1.72;
+  // sky and sun
+  const g = ctx.createLinearGradient(0, Y(0), 0, Y(HZ)); g.addColorStop(0, "#7fbcf5"); g.addColorStop(1, "#d3ebff");
+  ctx.fillStyle = g; ctx.fillRect(X(0), Y(0), L(3), L(HZ));
+  ctx.strokeStyle = "#f59f00"; ctx.lineWidth = Math.max(1, L(.03)); ctx.lineCap = "round";
+  for (let q = 0; q < 8; q++) { const a = q * Math.PI / 4; ctx.beginPath(); ctx.moveTo(X(2.55 + Math.cos(a) * .27), Y(.45 + Math.sin(a) * .27)); ctx.lineTo(X(2.55 + Math.cos(a) * .36), Y(.45 + Math.sin(a) * .36)); ctx.stroke(); }
+  ctx.lineCap = "butt";
+  ctx.fillStyle = "#ffd43b"; ctx.beginPath(); ctx.arc(X(2.55), Y(.45), L(.2), 0, 7); ctx.fill();
+  // distant hills on the horizon
+  ctx.fillStyle = "#9cc98a"; ctx.beginPath(); ctx.moveTo(X(0), Y(HZ));
+  for (let u = 0; u <= 3.001; u += .05) ctx.lineTo(X(u), Y(HZ - .12 - .07 * Math.sin(u * 2.3 + .6)));
+  ctx.lineTo(X(3), Y(HZ)); ctx.fill();
+  // lawn with mowing stripes
+  ctx.fillStyle = "#6fbf4f"; ctx.fillRect(X(0), Y(HZ), L(3), L(3 - HZ));
+  ctx.fillStyle = "#64b046";
+  for (let v = 2; v < 3; v += .25) ctx.fillRect(X(0), Y(v), L(3), L(.125));
+  // path from the porch to the bottom edge
+  ctx.fillStyle = "#dcc7a1"; ctx.beginPath();
+  ctx.moveTo(X(1.44), Y(1.9)); ctx.lineTo(X(1.56), Y(1.9)); ctx.lineTo(X(1.72), Y(3)); ctx.lineTo(X(1.28), Y(3)); ctx.fill();
+  // a bush in the field
+  ctx.fillStyle = "#3f8f3a";
+  for (const [u, v, r] of [[.62, 1.8, .09], [.74, 1.77, .11], [.86, 1.81, .08]]) { ctx.beginPath(); ctx.arc(X(u), Y(v), L(r), 0, 7); ctx.fill(); }
+  // the house, small in the middle patch
+  ctx.fillStyle = "#f1c27d"; ctx.fillRect(X(1.22), Y(1.4), L(.56), L(.46));
+  ctx.fillStyle = "#c4553d"; ctx.beginPath(); ctx.moveTo(X(1.5), Y(1.1)); ctx.lineTo(X(1.86), Y(1.42)); ctx.lineTo(X(1.14), Y(1.42)); ctx.fill();
+  ctx.fillStyle = "#9e3f2c"; ctx.fillRect(X(1.64), Y(1.16), L(.07), L(.14));
+  ctx.fillStyle = "#4dabf7"; ctx.fillRect(X(1.28), Y(1.5), L(.11), L(.1)); ctx.fillRect(X(1.61), Y(1.5), L(.11), L(.1));
+  ctx.strokeStyle = "#ffffff"; ctx.lineWidth = Math.max(.8, L(.015));
+  ctx.strokeRect(X(1.28), Y(1.5), L(.11), L(.1)); ctx.strokeRect(X(1.61), Y(1.5), L(.11), L(.1));
+  ctx.fillStyle = "#8b5a2b"; ctx.fillRect(X(1.45), Y(1.62), L(.1), L(.24));
+  // porch: a wooden deck and step in front of the door
+  ctx.fillStyle = "#b9875a"; ctx.fillRect(X(1.32), Y(1.85), L(.36), L(.05));
+  ctx.fillStyle = "#a07048"; ctx.fillRect(X(1.4), Y(1.9), L(.2), L(.03));
+  // the tree beside the house
+  ctx.fillStyle = "#7a4a24"; ctx.fillRect(X(2.36), Y(1.5), L(.07), L(.36));
+  ctx.fillStyle = "#3f8f3a";
+  for (const [u, v, r] of [[2.4, 1.36, .17], [2.27, 1.47, .12], [2.53, 1.47, .12], [2.4, 1.24, .12]]) { ctx.beginPath(); ctx.arc(X(u), Y(v), L(r), 0, 7); ctx.fill(); }
+  ctx.restore();
+}
+function orRun(types) {
+  const X = types.map((w, i) => OR.E[w].map((x, j) => x + (OR.pe ? orPE(i)[j] : 0)));
+  const Q = X.map(x => vm(x, OR.Wq)), K = X.map(x => vm(x, OR.Wk)), V = X.map(x => vm(x, OR.Wv));
+  const A = Q.map(q => softmax(K.map(k => dot(q, k) / 2)));
+  const O = A.map(a => V[0].map((_, j) => a.reduce((s, w, i) => s + w * V[i][j], 0)));
+  return { A, O };
+}
+function orUpdate(prev) {
+  OR.prev = prev || null;
+  OR.t0 = prev && !RM.matches ? now() : -1e9;
+  OR.res = [orRun(OR.S1), orRun(OR.ord.map(i => OR.S1[i]))];
+  orEq();
+}
+function orEq() {
+  const h = OR.hov, w = OR.S1[h], p2 = OR.ord.indexOf(h);
+  const o1 = OR.res[0].O[h], o2 = OR.res[1].O[p2];
+  const d = norm(o1.map((x, i) => x - o2[i]));
+  const s01 = norm(OR.res[0].O[0].map((x, i) => x - OR.res[0].O[1][i]));
+  const vec = v => "[" + v.map(x => tf(x)).join(",\\,") + "]";
+  const at = p => { const [r, c] = rc3(p); return `(${r},${c})`; };
+  setTex($("oEq"), `\\(o^{(1)}_{\\text{${w}}\\,@${at(h)}}=${vec(o1)}\\quad o^{(2)}_{\\text{${w}}\\,@${at(p2)}}=${vec(o2)}\\quad \\lVert\\Delta\\rVert=\\class{ss}{\\mathbf{${tf(d, 3)}}}\\qquad \\lVert o_{\\text{sky}@(0,0)}-o_{\\text{sky}@(0,1)}\\rVert=\\class{${s01 < 1e-6 ? "ss" : "qq"}}{\\mathbf{${tf(s01, 3)}}}\\)`, true);
+}
+function drawOr(which) {
+  const cv = $(which ? "cvO2" : "cvO1"), { ctx, w, h } = fit(cv);
+  const res = OR.res[which], ids = which ? OR.ord : [...Array(9).keys()];
+  const other = OR.res[1 - which], otherIds = which ? [...Array(9).keys()] : OR.ord;
+  const p = which ? ease(clamp((now() - OR.t0) / 650, 0, 1)) : 1;
+  const posOf = (id, pp) => which && OR.prev ? lerp(OR.prev.indexOf(id), OR.ord.indexOf(id), pp) : ids.indexOf(id);
+  // the image, patch by patch
+  const S = Math.max(60, Math.min(w * .42, h * .3)), ix = (w - S) / 2, iy = 2, ps = S / 3;
+  for (const id of ids) {
+    const from = which && OR.prev ? rc3(OR.prev.indexOf(id)) : rc3(ids.indexOf(id)), to = rc3(ids.indexOf(id));
+    const r = lerp(from[0], to[0], p), c = lerp(from[1], to[1], p);
+    drawPatch(ctx, OR.S1[id], ix + c * ps, iy + r * ps, ps);
+  }
+  ctx.strokeStyle = C.surface; ctx.lineWidth = 2;
+  for (let q = 1; q < 3; q++) { line(ctx, ix + q * ps, iy, ix + q * ps, iy + S, C.surface, 2); line(ctx, ix, iy + q * ps, ix + S, iy + q * ps, C.surface, 2); }
+  if (p >= 1) { const [r, c] = rc3(ids.indexOf(OR.hov)); outline(ctx, ix + c * ps + 1, iy + r * ps + 1, ps - 2, ps - 2); }
+  // attention matrix with outputs
+  const n = 9, top = iy + S + FS * 3.2, th = Math.max(10, Math.min(FS * 1.9, (w - 40) / 22));
+  const lw = th + FS * 4.2, gw = clamp(w * .24, 70, 170), gap = FS;
+  const cs = Math.max(6, Math.min((w - lw - gw - gap - 8) / n, (h - top - 4) / n));
+  const gx = Math.max(0, (w - (lw + cs * n + gap + gw)) / 2) + lw, gy = top;
+  OR.geo[which] = { ix, iy, ps, gy, cs };
+  for (let c = 0; c < n; c++) {
+    const tsz = Math.min(th, cs * .9);
+    drawPatch(ctx, OR.S1[ids[c]], gx + cs * (c + .5) - tsz / 2, gy - tsz - FS * 1.1, tsz);
+    const [r, cc] = rc3(c);
+    text(ctx, `${r},${cc}`, gx + cs * (c + .5), gy - 3, C.muted, "center", "bottom", FS * .72);
+  }
+  ctx.globalAlpha = .25 + .75 * p;
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    const a = res.A[r][c];
+    ctx.fillStyle = css(virRGB(a / .45)); ctx.fillRect(gx + c * cs + 1, gy + r * cs + 1, cs - 2, cs - 2);
+    if (cs > 40) text(ctx, a.toFixed(2), gx + (c + .5) * cs, gy + (r + .5) * cs, a / .45 > .6 ? "#15202c" : "#ffffff", "center", "middle", Math.min(FS * .85, cs * .26));
+  }
+  ctx.globalAlpha = 1;
+  const bx = gx + cs * n + gap, bw = (gw - FS * 3.2) / 4, sc = cs * .46 / .65;
+  for (let pos = 0; pos < n; pos++) {
+    const id = ids[pos], y = gy + cs * posOf(id, p);
+    if (id === OR.hov) { ctx.fillStyle = rgba(C.q, .13); ctx.fillRect(gx - lw + 2, y, lw - 2 + cs * n + gap + gw, cs); }
+    const tsz = Math.min(th, cs * .86);
+    drawPatch(ctx, OR.S1[id], gx - lw + 4, y + (cs - tsz) / 2, tsz);
+    const [r, c] = rc3(pos);
+    text(ctx, `@${r},${c}`, gx - 6, y + cs / 2, id === OR.hov ? C.q : C.muted, "right", "middle", FS * .8, id === OR.hov ? 600 : 500);
+    const o = res.O[pos], oo = other.O[otherIds.indexOf(id)], mid = y + cs / 2;
+    line(ctx, bx, mid, bx + bw * 4, mid, C.line, 1);
+    for (let j = 0; j < 4; j++) {
+      const x = bx + j * bw + 2, hgt = o[j] * sc;
+      ctx.fillStyle = C.v; ctx.fillRect(x, Math.min(mid, mid - hgt), bw - 4, Math.abs(hgt));
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.2; ctx.setLineDash([3, 2]);
+      ctx.strokeRect(x - .5, Math.min(mid, mid - oo[j] * sc), bw - 3, Math.abs(oo[j] * sc)); ctx.setLineDash([]);
+    }
+    const d = norm(o.map((x, i) => x - oo[i]));
+    text(ctx, d < 1e-6 ? "same" : "Δ " + d.toFixed(2), bx + bw * 4 + 6, mid, d < 1e-6 ? C.v : C.q, "left", "middle", FS * .8, 600);
+  }
+}
+function orHover(which, e) {
+  const g = OR.geo[which]; if (!g) return;
+  const [x, y] = localXY(e.currentTarget, e), ids = which ? OR.ord : [...Array(9).keys()];
+  let pos = -1;
+  if (x >= g.ix && x < g.ix + 3 * g.ps && y >= g.iy && y < g.iy + 3 * g.ps) pos = Math.floor((y - g.iy) / g.ps) * 3 + Math.floor((x - g.ix) / g.ps);
+  else { const r = Math.floor((y - g.gy) / g.cs); if (r >= 0 && r < 9) pos = r; }
+  if (pos < 0) return;
+  if (ids[pos] !== OR.hov) { OR.hov = ids[pos]; orEq(); }
+}
+function orSet(ord) { const prev = OR.ord.slice(); OR.ord = ord; orUpdate(prev); }
+
+// =====================================================================
+// 2. Absolute: raster index and ViT's learned table
+// =====================================================================
+const AB = { m: "int", G: 14, T: 14, D: 32, interp: true, pr: [5, 9], P: [], grow: null, V: null, vk: "" };
+(() => {
+  const r = rng(11), D = AB.D;
+  const par = Array.from({ length: D }, () => [.45 + .4 * r(), .18 + .3 * r(), r() * 6.28]);
+  for (let i = 0; i < AB.T; i++) {
+    AB.P.push([]);
+    for (let j = 0; j < AB.T; j++) AB.P[i].push(par.map(([a, f, ph], d) => a * Math.sin(f * (d < D / 2 ? i : j) + ph) + .12 * gauss(r)));
+  }
+  // centre each dimension over the grid so similarity is about position, not a shared offset
+  for (let d = 0; d < D; d++) {
+    let m = 0; for (const row of AB.P) for (const v of row) m += v[d];
+    m /= AB.T * AB.T; for (const row of AB.P) for (const v of row) v[d] -= m;
+  }
+})();
+function abVec(r, c) {
+  const G = AB.G, T = AB.T;
+  if (G === T) return AB.P[r][c];
+  if (!AB.interp) return r < T && c < T ? AB.P[r][c] : null;
+  const u = clamp((r + .5) * T / G - .5, 0, T - 1), v = clamp((c + .5) * T / G - .5, 0, T - 1);
+  const r0 = Math.min(T - 2, Math.floor(u)), c0 = Math.min(T - 2, Math.floor(v)), fu = u - r0, fv = v - c0;
+  return AB.P[r0][c0].map((x, d) => x * (1 - fu) * (1 - fv) + AB.P[r0 + 1][c0][d] * fu * (1 - fv) + AB.P[r0][c0 + 1][d] * (1 - fu) * fv + AB.P[r0 + 1][c0 + 1][d] * fu * fv);
+}
+const cosSim = (a, b) => dot(a, b) / (norm(a) * norm(b) + 1e-12);
+function abVecs() {
+  const key = AB.G + "|" + AB.interp;
+  if (AB.vk !== key) { AB.vk = key; AB.V = []; for (let r = 0; r < AB.G; r++) for (let c = 0; c < AB.G; c++) AB.V.push(abVec(r, c)); }
+  return AB.V;
+}
+function abUpdate() {
+  const G = AB.G;
+  AB.pr = AB.pr.map(x => Math.min(x, G - 1));
+  $("aG").value = G;
+  setText("aGO", `${G}×${G}`);
+  $("aI").disabled = AB.m !== "learn"; $("aIL").style.opacity = AB.m === "learn" ? 1 : .45;
+  const [pr, pc] = AB.pr, t = pr * G + pc;
+  setTex($("aRule"), AB.m === "int"
+    ? "\\[ p_{r,c}=t\\,u,\\qquad t=r\\,G+c \\]"
+    : `\\[ p_{r,c}=P_{r,c,:},\\quad P\\in\\mathbb{R}^{14\\times14\\times d} \\]`);
+  setText("aNote", AB.m === "int"
+    ? "Reading order flattens the grid: the patch directly below is G steps away, the last patch of the row above is only c + 1 steps away. And t grows to G² − 1, swamping the patch content."
+    : "ViT and DeiT learn one vector per patch of a 14×14 grid (16‑px patches at 224 px). Fine‑tune at 384 px and the grid is 24×24: there are no vectors for the new patches, so the table is resized by interpolation and trained again. Here each patch is 16 px, so the grid is " + (AB.G * 16) + " px wide.");
+  setText("aT1", AB.m === "int" ? "Each patch's index t = r·G + c" : "Cosine similarity of each patch's p to the probe's");
+  setText("aC1", AB.m === "int" ? "colour: how far each index is from the probe's" : "click a patch to probe it");
+  const kk = AB.m === "int"
+    ? '<span><i class="dot" style="background:var(--q)"></i>index close to the probe\'s</span><span><i class="dot" style="background:var(--k)"></i>G or more away</span><span>click a patch to probe it</span>'
+    : '<span><i class="dot" style="background:var(--q)"></i>similar</span><span><i class="dot" style="background:var(--k)"></i>dissimilar</span><span>hatched: no embedding</span>';
+  if ($("aK1")._k !== kk) { $("aK1")._k = kk; $("aK1").innerHTML = kk; }
+  setText("aT2", AB.m === "int" ? "The index drowns the patch" : "Every patch against every other");
+  setText("aC2", AB.m === "int" ? `length of p_t for all ${G * G} patches vs a patch embedding` : "one small map per patch, as in Fig. 7 of the ViT paper");
+  let eq;
+  if (AB.m === "int") eq = `\\(\\text{probe }(${pr},${pc})\\to t=${t}:\\quad \\text{below }(${pr + 1},${pc})\\to\\lvert\\Delta t\\rvert=\\class{qq}{\\mathbf{${G}}},\\quad \\text{end of row above }(${pr - 1},${G - 1})\\to\\lvert\\Delta t\\rvert=\\class{ss}{\\mathbf{${pc + 1}}},\\quad \\lVert p_t\\rVert=${t}\\ \\text{vs}\\ \\lVert e\\rVert\\approx1\\)`;
+  else {
+    const v = abVec(pr, pc);
+    if (!v) eq = `\\(p_{${pr},${pc}}=\\class{qq}{\\mathbf{\\text{undefined}}}:\\ \\text{the table has rows and columns }0\\ldots13\\ \\text{only}\\)`;
+    else {
+      const right = pc + 1 < G ? abVec(pr, pc + 1) : null, below = pr + 1 < G ? abVec(pr + 1, pc) : null, far = abVec(G - 1 - pr, G - 1 - pc);
+      eq = `\\(\\cos(p_{${pr},${pc}},\\,\\text{right})=${right ? tf(cosSim(v, right)) : "\\text{n/a}"}\\quad \\cos(\\cdot,\\,\\text{below})=${below ? tf(cosSim(v, below)) : "\\text{n/a}"}\\quad \\cos(\\cdot,\\,\\text{opposite corner})=${far ? tf(cosSim(v, far)) : "\\text{n/a}"}\\qquad \\text{grid }${G}\\times${G}${G === 14 ? "\\ \\text{(as trained)}" : AB.interp ? "\\ \\text{(table resized)}" : "\\ \\class{qq}{\\text{(no resizing)}}"}\\)`;
+    }
+  }
+  setTex($("aEq"), eq, true);
+}
+function drawAb() {
+  if (AB.grow) {
+    const G = Math.min(24, Math.round(AB.grow.G0 + (now() - AB.grow.t0) / 350));
+    if (G !== AB.G) { AB.G = G; abUpdate(); }
+    if (G >= 24) { AB.grow = null; growBtn(); }
+  }
+  const G = AB.G, [pr, pc] = AB.pr, pt = pr * G + pc;
+  {
+    const { ctx, w, h } = fit($("cvA1")), lm = FS * 3.2, tm = FS * 2.6, S = Math.max(40, Math.min(w - lm - FS, h - tm - 4)), x0 = lm + Math.max(0, (w - lm - FS - S) / 2), y0 = tm, cs = S / G;
+    AB.geo = { x0, y0, cs };
+    drawScene(ctx, x0, y0, S);
+    const V = AB.m === "learn" ? abVecs() : null, pv = V ? V[pt] : null;
+    for (let r = 0; r < G; r++) for (let c = 0; c < G; c++) {
+      const x = x0 + c * cs, y = y0 + r * cs;
+      if (AB.m === "int") {
+        const d = Math.abs(r * G + c - pt);
+        ctx.fillStyle = rgba(C.surface, .15); ctx.fillStyle = css(divRGB(1 - 2 * Math.min(1, d / G)));
+        ctx.globalAlpha = .72; ctx.fillRect(x, y, cs, cs); ctx.globalAlpha = 1;
+        if (cs > 22) text(ctx, String(r * G + c), x + cs / 2, y + cs / 2, C.ink, "center", "middle", Math.min(FS * .85, cs * .3), 600);
+      } else {
+        const v = V[r * G + c];
+        if (!v || !pv) { ctx.globalAlpha = .85; hatch(ctx, x, y, cs, cs); ctx.globalAlpha = 1; continue; }
+        ctx.fillStyle = css(divRGB(cosSim(pv, v))); ctx.globalAlpha = .75; ctx.fillRect(x, y, cs, cs); ctx.globalAlpha = 1;
+      }
+    }
+    for (let q = 0; q <= G; q++) { line(ctx, x0 + q * cs, y0, x0 + q * cs, y0 + S, rgba(C.surface, .55), 1); line(ctx, x0, y0 + q * cs, x0 + S, y0 + q * cs, rgba(C.surface, .55), 1); }
+    if (AB.m === "learn" && !AB.interp && G > AB.T) {
+      ctx.strokeStyle = C.q; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.strokeRect(x0, y0, cs * AB.T, cs * AB.T); ctx.setLineDash([]);
+      text(ctx, "trained 14×14", x0 + cs * AB.T - 4, y0 + cs * AB.T - 4, C.q, "right", "bottom", FS * .9, 600, BODY);
+    }
+    outline(ctx, x0 + pc * cs, y0 + pr * cs, cs, cs);
+    // row and column numbers
+    const step = G > 16 ? 2 : 1, fz = Math.min(FS * .8, cs * .5 + 4);
+    text(ctx, "column c →", x0 + S, y0 - FS * 1.5, C.muted, "right", "bottom", FS * .82, 500, BODY);
+    text(ctx, "row r ↓", x0 - 6, y0 - FS * 1.5, C.muted, "right", "bottom", FS * .82, 500, BODY);
+    for (let q = 0; q < G; q += step) {
+      text(ctx, String(q), x0 + (q + .5) * cs, y0 - 4, q === pc ? C.q : C.muted, "center", "bottom", fz, q === pc ? 700 : 500);
+      text(ctx, String(q), x0 - 6, y0 + (q + .5) * cs, q === pr ? C.q : C.muted, "right", "middle", fz, q === pr ? 700 : 500);
+    }
+  }
+  {
+    const { ctx, w, h } = fit($("cvA2"));
+    if (AB.m === "int") {
+      const box = stdBox(w, h), N = G * G;
+      const { X, Y } = frame(ctx, box, [0, N - 1], [0, N - 1], { xl: "patch index t (reading order)", yl: "vector length" });
+      ctx.fillStyle = rgba(C.k, .25); ctx.fillRect(box.x, Y(Math.max(2, (N - 1) * .012)), box.w, Y(0) - Y(Math.max(2, (N - 1) * .012)));
+      text(ctx, "‖e‖ ≈ 1: the patch content", box.x + box.w - 6, Y(Math.max(2, (N - 1) * .012)) - 4, C.k, "right", "bottom", FS * .9, 600, BODY);
+      polyline(ctx, [[X(0), Y(0)], [X(N - 1), Y(N - 1)]], C.q, 2.5);
+      for (let r = 1; r < G; r++) line(ctx, X(r * G), Y(r * G) - 5, X(r * G), Y(r * G) + 5, C.q, 1);
+      line(ctx, X(pt), box.y, X(pt), box.y + box.h, C.ink, 1, [3, 3]);
+      ctx.fillStyle = C.q; ctx.beginPath(); ctx.arc(X(pt), Y(pt), 5, 0, 7); ctx.fill();
+      text(ctx, `‖p${pt}‖ = ${pt}`, X(pt) + 8, Y(pt) - 6, C.q, pt > N * .7 ? "right" : "left", "bottom", FS, 600);
+      text(ctx, "ticks: start of each patch row", box.x + 6, box.y + 2, C.muted, "left", "top", FS * .85, 500, BODY);
+    } else {
+      const V = abVecs(), cell = G + 1, Wd = G * cell - 1;
+      const img = heatImg(`abm|${G}|${AB.interp}`, Wd, Wd, (y, x) => {
+        const mr = Math.floor(y / cell), mc = Math.floor(x / cell), r = y % cell, c = x % cell;
+        if (r === G || c === G) return null;
+        const a = V[mr * G + mc], b = V[r * G + c];
+        return a && b ? divRGB(cosSim(a, b)) : hex(C.sunk);
+      });
+      const S = Math.max(40, Math.min(w - FS * 2, h - FS)), x0 = (w - S) / 2, y0 = 2, k = S / Wd;
+      drawImg(ctx, img, x0, y0, S, S);
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.strokeRect(x0 + pc * cell * k - 1, y0 + pr * cell * k - 1, G * k + 2, G * k + 2);
+    }
+  }
+}
+function growBtn() { const b = $("aGrow"); b.textContent = AB.grow ? "Stop" : "Grow the resolution"; b.classList.toggle("on", !!AB.grow); b.classList.toggle("primary", !AB.grow); }
+
+// =====================================================================
+// 3. Bits to waves
+// =====================================================================
+const BI = { m: "bin", t: 0, play: null };
+const biDims = m => m === "sc" ? 12 : 6;
+function biVal(m, i, t) {
+  if (m === "bin") return ((Math.floor(t + 1e-9) >> i) & 1) ? 1 : -1;
+  if (m === "sin") { const P = Math.pow(2, i); return -Math.cos(Math.PI * (t - (P - 1) / 2) / P); }
+  const f = i >> 1, w = Math.PI / Math.pow(2, f);
+  return i & 1 ? Math.cos(w * t) : Math.sin(w * t);
+}
+const biVec = (m, t) => Array.from({ length: biDims(m) }, (_, i) => biVal(m, i, t));
+function biDist(m, t) { const a = biVec(m, t), b = biVec(m, t + 1); return norm(a.map((x, i) => x - b[i])) / Math.sqrt(a.length); }
+function biUpdate() {
+  const t = Math.floor(BI.t + 1e-9);
+  $("bT").value = t; setText("bTO", String(t));
+  setText("bT1", { bin: "Each bit is a square wave", sin: "Each bit smoothed into one sine wave", sc: "Each frequency as a sine + cosine pair" }[BI.m]);
+  let eq;
+  if (BI.m === "bin") {
+    const bits = x => Array.from({ length: 6 }, (_, i) => (x >> (5 - i)) & 1).join("");
+    const flips = [...Array(6).keys()].filter(i => ((t >> i) & 1) !== (((t + 1) >> i) & 1)).length;
+    eq = `\\(t=${t}=${bits(t)}_2\\ \\to\\ t+1=${t + 1}=${bits(t + 1)}_2:\\quad \\class{${flips > 2 ? "qq" : "ss"}}{\\mathbf{${flips}\\ \\text{bit${flips > 1 ? "s" : ""} flip}}},\\quad \\lVert p_{t+1}-p_t\\rVert/\\sqrt{D}=${tf(biDist("bin", t))}\\)`;
+  } else {
+    const v = biVec(BI.m, t).slice(0, 6).map(x => tf(x)).join(",\\,");
+    eq = `\\(p_{${t}}=[${v}${BI.m === "sc" ? ",\\ldots" : ""}]\\qquad \\lVert p_{t+1}-p_t\\rVert/\\sqrt{D}=\\class{ss}{\\mathbf{${tf(biDist(BI.m, t), 3)}}}${BI.m === "sc" ? "\\quad\\text{for every }t" : ""}\\)`;
+  }
+  setTex($("bEq"), eq, true);
+}
+function drawBi() {
+  if (BI.play) {
+    const t = BI.play.t0v + (now() - BI.play.t0) / 1000 * 4;
+    if (t >= 62) { BI.t = 62; BI.play = null; biBtn(); } else BI.t = t;
+    if (Math.floor(BI.t) !== +$("bT").value) biUpdate();
+  }
+  const m = BI.m, D = biDims(m), T = 64;
+  {
+    const { ctx, w, h } = fit($("cvB1"));
+    const left = FS * 8.5, right = FS * 4.5, top = FS * .4, bot = FS * 2;
+    const pw = w - left - right, sh = (h - top - bot) / D;
+    const X = t => left + t / (T - 1) * pw;
+    for (let i = 0; i < D; i++) {
+      const y0 = top + i * sh, mid = y0 + sh / 2, amp = sh * .36;
+      if (i % 2 === 0) { ctx.fillStyle = C.sunk; ctx.fillRect(left, y0, pw, sh); }
+      line(ctx, left, mid, left + pw, mid, C.grid, 1);
+      let lab;
+      if (m === "bin") lab = `bit ${i} · per ${Math.pow(2, i + 1)}`;
+      else if (m === "sin") lab = `wave ${i} · per ${Math.pow(2, i + 1)}`;
+      else lab = `${i & 1 ? "cos" : "sin"} ω${i >> 1} · per ${Math.pow(2, (i >> 1) + 1)}`;
+      text(ctx, lab, left - 8, mid, C.muted, "right", "middle", Math.min(FS * .85, sh * .6));
+      const pts = [];
+      const steps = Math.max(200, Math.round(pw));
+      for (let s = 0; s <= steps; s++) { const t = s / steps * (T - 1); pts.push([X(t), mid - amp * biVal(m, i, t)]); }
+      polyline(ctx, pts, m === "bin" ? C.neg : m === "sin" ? C.k : C.sc, 1.6);
+      if (sh > 14) {
+        ctx.fillStyle = C.ink;
+        for (let t = 0; t < T; t++) { ctx.beginPath(); ctx.arc(X(t), mid - amp * biVal(m, i, t), 1.4, 0, 7); ctx.fill(); }
+      }
+      const v = biVal(m, i, Math.floor(BI.t + 1e-9));
+      const bx = left + pw + 8, bw = right - 12;
+      ctx.fillStyle = css(divRGB(v)); ctx.fillRect(bx, y0 + 1.5, bw, sh - 3);
+      text(ctx, m === "bin" ? (v > 0 ? "1" : "0") : tf(v), bx + bw / 2, mid, Math.abs(v) > .55 ? "#ffffff" : C.ink, "center", "middle", Math.min(FS * .9, sh * .6), 600);
+    }
+    const ct = BI.play ? BI.t : Math.floor(BI.t + 1e-9);
+    line(ctx, X(ct), top, X(ct), top + D * sh, C.sc, 2.5);
+    for (let t = 0; t < T; t += 8) text(ctx, String(t), X(t), top + D * sh + 5, C.muted, "center", "top", FS * .85);
+  }
+  {
+    const { ctx, w, h } = fit($("cvB2")), box = stdBox(w, h, 8.5, 4.5, 1, 2.8);
+    const { X, Y } = frame(ctx, box, [0, 62], [0, 1.2], { yt: [0, .5, 1] });
+    for (const [mm, col] of [["bin", C.neg], ["sin", C.k], ["sc", C.sc]]) {
+      const pts = []; for (let t = 0; t <= 62; t++) pts.push([X(t), Y(biDist(mm, t))]);
+      polyline(ctx, pts, col, mm === m ? 2.8 : 1.2);
+      if (mm !== m) continue;
+      ctx.fillStyle = col; for (const [x, y] of pts) { ctx.beginPath(); ctx.arc(x, y, 2.2, 0, 7); ctx.fill(); }
+    }
+    const t = Math.floor(BI.t + 1e-9);
+    line(ctx, X(t), box.y, X(t), box.y + box.h, C.sc, 2);
+  }
+}
+function biBtn() { const b = $("bPlay"); b.classList.toggle("running", !!BI.play); b.querySelector("span").textContent = BI.play ? "Stop" : "Count"; }
+
+// =====================================================================
+// 4. Sinusoidal
+// =====================================================================
+const SI = { d: 64, lb: 4, t: 20, k: 6, N: 100, play: null };
+const siW = i => Math.pow(10, -SI.lb * 2 * i / SI.d);
+const siPE = t => { const p = []; for (let i = 0; i < SI.d / 2; i++) { const a = t * siW(i); p.push(Math.sin(a), Math.cos(a)); } return p; };
+function siUpdate() {
+  $("sT").value = Math.round(SI.t);
+  setText("sDO", String(SI.d)); setText("sBO", Math.pow(10, SI.lb) >= 1e4 ? Math.round(Math.pow(10, SI.lb)).toLocaleString("en") : String(Math.round(Math.pow(10, SI.lb))));
+  setText("sTO", String(Math.round(SI.t))); setText("sKO", (SI.k > 0 ? "+" : "") + SI.k);
+  const t = Math.round(SI.t), k = SI.k, a = siPE(t), b = siPE(t + k);
+  setTex($("sEq"), `\\(p_{${t}}\\cdot p_{${t + k}}=\\textstyle\\sum_{i=0}^{${SI.d / 2 - 1}}\\cos(\\omega_i\\cdot ${k})=\\class{ss}{\\mathbf{${tf(dot(a, b))}}}\\qquad p_{${t + 37}}\\cdot p_{${t + 37 + k}}=${tf(dot(siPE(t + 37), siPE(t + 37 + k)))}\\qquad\\text{slowest period }2\\pi\\cdot\\text{base}\\approx ${Math.round(2 * Math.PI / siW(SI.d / 2 - 1)).toLocaleString("en")}\\)`, true);
+}
+function drawSi() {
+  if (SI.play) {
+    SI.t = (SI.play.t0v + (now() - SI.play.t0) / 1000 * 6) % SI.N;
+    if (Math.round(SI.t) !== +$("sT").value) siUpdate();
+  }
+  const t = SI.t, k = SI.k, d = SI.d;
+  {
+    const { ctx, w, h } = fit($("cvS1")), left = FS * 4.6, right = FS * 1, top = FS * .4, bot = FS * 2.4;
+    const pw = w - left - right, ph = h - top - bot;
+    const img = heatImg(`si|${d}|${SI.lb}`, SI.N, d, (r, c) => divRGB(r & 1 ? Math.cos(c * siW(r >> 1)) : Math.sin(c * siW(r >> 1))));
+    drawImg(ctx, img, left, top, pw, ph);
+    const cx = c => left + (c + .5) / SI.N * pw;
+    text(ctx, "dim 0", left - 6, top + 4, C.muted, "right", "top", FS * .85);
+    text(ctx, "dim " + (d - 1), left - 6, top + ph - 2, C.muted, "right", "bottom", FS * .85);
+    text(ctx, "fast", left - 6, top + FS * 1.4, C.muted, "right", "top", FS * .8, 500, BODY);
+    text(ctx, "slow", left - 6, top + ph - FS * 1.4, C.muted, "right", "bottom", FS * .8, 500, BODY);
+    for (let c = 0; c < SI.N; c += 10) text(ctx, String(c), cx(c), top + ph + 5, C.muted, "center", "top", FS * .85);
+    text(ctx, "column →", left + pw, top + ph + 5 + FS * 1.1, C.muted, "right", "top", FS * .8, 500, BODY);
+    const cw = Math.max(2, pw / SI.N);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = C.sc; ctx.strokeRect(cx(t) - cw / 2, top, cw, ph);
+    const tk = t + k;
+    if (tk >= 0 && tk < SI.N) { ctx.strokeStyle = C.q; ctx.strokeRect(cx(tk) - cw / 2, top, cw, ph); }
+  }
+  {
+    const { ctx, w, h } = fit($("cvS2"));
+    const P = d / 2, nd = Math.min(8, P), idx = Array.from({ length: nd }, (_, j) => Math.round(j * (P - 1) / Math.max(1, nd - 1)));
+    const cols = nd > 4 ? 4 : nd, rows = Math.ceil(nd / cols);
+    const cellW = w / cols, cellH = h / rows, R = Math.max(6, Math.min(cellW, cellH - FS * 2.6) / 2 - 6);
+    idx.forEach((i, j) => {
+      const cx = cellW * (j % cols + .5), cy = cellH * Math.floor(j / cols) + R + 6;
+      const om = siW(i), a = t * om, b = (t + k) * om;
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke();
+      for (let q = 0; q < 12; q++) { const g = q / 12 * 2 * Math.PI; line(ctx, cx + Math.cos(g) * R * .9, cy - Math.sin(g) * R * .9, cx + Math.cos(g) * R, cy - Math.sin(g) * R, C.line, 1); }
+      const sweep = clamp(k * om, -2 * Math.PI + .01, 2 * Math.PI - .01);
+      if (Math.abs(sweep) > .01) {
+        ctx.strokeStyle = rgba(C.muted, .9); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, R * .5, -a, -(a + sweep), sweep > 0); ctx.stroke();
+      }
+      arrow(ctx, cx, cy, cx + Math.cos(b) * R * .88, cy - Math.sin(b) * R * .88, C.q, 2.2);
+      arrow(ctx, cx, cy, cx + Math.cos(a) * R * .88, cy - Math.sin(a) * R * .88, C.sc, 2.6);
+      const per = 2 * Math.PI / om;
+      text(ctx, `i=${i} · period ${per >= 1000 ? Math.round(per).toLocaleString("en") : per.toFixed(1)}`, cx, cy + R + 6, C.ink, "center", "top", FS * .8);
+      text(ctx, `turn ${(k * om * 180 / Math.PI).toFixed(0)}°`, cx, cy + R + 6 + FS * 1.15, C.muted, "center", "top", FS * .8);
+    });
+  }
+  {
+    const { ctx, w, h } = fit($("cvS3")), box = stdBox(w, h);
+    const { X, Y } = frame(ctx, box, [-50, 50], [-.4, 1], { xl: "offset k", yt: [-.25, 0, .25, .5, .75, 1] });
+    const t0 = Math.round(t), base = siPE(t0), base2 = siPE(t0 + 37);
+    const p1 = [], p2 = [];
+    for (let kk = -50; kk <= 50; kk++) { p1.push([X(kk), Y(dot(base, siPE(t0 + kk)) / (d / 2))]); p2.push([X(kk), Y(dot(base2, siPE(t0 + 37 + kk)) / (d / 2))]); }
+    polyline(ctx, p1, C.sc, 3);
+    polyline(ctx, p2, C.q, 1.6, [5, 4]);
+    const v = dot(base, siPE(t0 + k)) / (d / 2);
+    line(ctx, X(k), box.y, X(k), box.y + box.h, C.ink, 1, [3, 3]);
+    ctx.fillStyle = C.sc; ctx.beginPath(); ctx.arc(X(k), Y(v), 5, 0, 7); ctx.fill();
+    text(ctx, tf(v), X(k) + 8, Y(v) - 6, C.sc, "left", "bottom", FS, 600);
+  }
+}
+function siBtn() { const b = $("sPlay"); b.classList.toggle("running", !!SI.play); b.querySelector("span").textContent = SI.play ? "Stop" : "Run the clock"; }
+
+// =====================================================================
+// 5. Fourier features in 2-D
+// =====================================================================
+const FF = { G: 84, mode: "gauss", sig: 3, m: 128, seed: 3, v: [.38, .62], B: [], cs: null, sn: null, K: null, geo: null, drag: false, kv: "" };
+function ffBuild() {
+  const r = rng(FF.seed * 977 + 1);
+  if (FF.mode === "gauss") FF.B = Array.from({ length: FF.m }, () => [gauss(r) * FF.sig, gauss(r) * FF.sig]);
+  else {
+    const L = Math.floor(Math.log2(FF.sig)) + 1; FF.B = [];
+    for (let l = 0; l < L; l++) FF.B.push([Math.pow(2, l), 0], [0, Math.pow(2, l)]);
+  }
+  const G = FF.G, M = FF.B.length;
+  FF.cs = new Float32Array(M * G * G); FF.sn = new Float32Array(M * G * G);
+  for (let j = 0; j < M; j++) {
+    const [bx, by] = FF.B[j];
+    for (let gy = 0; gy < G; gy++) for (let gx = 0; gx < G; gx++) {
+      const u = (gx + .5) / G, w = 1 - (gy + .5) / G, a = 2 * Math.PI * (bx * u + by * w), i = j * G * G + gy * G + gx;
+      FF.cs[i] = Math.cos(a); FF.sn[i] = Math.sin(a);
+    }
+  }
+  FF.kv = ""; ffKernel(); ffUpdate();
+}
+function ffKernel() {
+  const key = FF.v.join(",");
+  if (key === FF.kv) return; FF.kv = key;
+  const G = FF.G, M = FF.B.length, K = new Float32Array(G * G);
+  for (let j = 0; j < M; j++) {
+    const [bx, by] = FF.B[j], a = 2 * Math.PI * (bx * FF.v[0] + by * FF.v[1]), c = Math.cos(a), s = Math.sin(a), o = j * G * G;
+    for (let g = 0; g < G * G; g++) K[g] += c * FF.cs[o + g] + s * FF.sn[o + g];
+  }
+  for (let g = 0; g < G * G; g++) K[g] /= M;
+  FF.K = K;
+}
+function ffHalfWidth() {
+  // distance from v along a few directions where similarity first drops below 0.5
+  let acc = 0, n = 0;
+  for (let q = 0; q < 8; q++) {
+    const a = q / 8 * Math.PI, dx = Math.cos(a), dy = Math.sin(a);
+    for (let r = .002; r < .5; r += .002) {
+      let s = 0;
+      for (const [bx, by] of FF.B) s += Math.cos(2 * Math.PI * (bx * dx + by * dy) * r);
+      if (s / FF.B.length < .5) { acc += r; n++; break; }
+    }
+  }
+  return n ? acc / n : NaN;
+}
+function ffUpdate() {
+  setText("fSO", String(FF.sig)); setText("fMmO", FF.mode === "gauss" ? String(FF.m) : String(FF.B.length) + " (fixed)");
+  $("fMm").disabled = FF.mode !== "gauss";
+  const hw = ffHalfWidth();
+  setText("fNote", FF.mode === "gauss"
+    ? "Tancik et al. (2020): small σ gives a wide, smooth similarity; large σ a sharp, spiky one."
+    : "NeRF‑style: octaves 1, 2, 4, … along each axis. Similarity is no longer round, it follows the axes.");
+  setTex($("fEq"), `\\(v=(${FF.v[0].toFixed(2)},\\ ${FF.v[1].toFixed(2)})\\qquad m=${FF.B.length}\\ \\text{features},\\ \\sigma=${FF.sig}\\qquad \\text{similarity falls to }0.5\\ \\text{at}\\ \\lVert v-u\\rVert\\approx\\class{ss}{\\mathbf{${isFinite(hw) ? hw.toFixed(3) : "> 0.5"}}}${FF.mode === "gauss" ? `\\quad(\\text{theory }\\tfrac{0.187}{\\sigma}=${(.187 / FF.sig).toFixed(3)})` : ""}\\)`, true);
+}
+function drawFF() {
+  ffKernel();
+  {
+    const { ctx, w, h } = fit($("cvF1")), s = Math.max(40, Math.min(w - FS * 4, h - FS * 3)), x0 = (w - s) / 2 + FS, y0 = FS * .6;
+    FF.geo = { x0, y0, s };
+    const K = FF.K, G = FF.G;
+    const img = heatImg(`ffk|${FF.seed}|${FF.mode}|${FF.sig}|${FF.m}|${FF.kv}`, G, G, (r, c) => divRGB(K[r * G + c]));
+    drawImg(ctx, img, x0, y0, s, s, true);
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1; ctx.strokeRect(x0, y0, s, s);
+    for (const v of [0, .5, 1]) {
+      text(ctx, num(v), x0 + v * s, y0 + s + 5, C.muted, "center", "top", FS * .85);
+      text(ctx, num(v), x0 - 6, y0 + s - v * s, C.muted, "right", "middle", FS * .85);
+    }
+    const px = x0 + FF.v[0] * s, py = y0 + (1 - FF.v[1]) * s;
+    ctx.lineWidth = 3; ctx.strokeStyle = "#ffffff"; ctx.beginPath(); ctx.arc(px, py, 8, 0, 7); ctx.stroke();
+    ctx.lineWidth = 2; ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.arc(px, py, 8, 0, 7); ctx.stroke();
+    text(ctx, "v", px + 11, py - 9, C.ink, "left", "bottom", FS * 1.1, 600);
+  }
+  {
+    const { ctx, w, h } = fit($("cvF2")), M = Math.min(8, FF.B.length), G = FF.G;
+    const cols = 4, rows = 2, gap = FS * .8, lab = FS * 2.6;
+    const ts = Math.max(20, Math.min((w - gap * (cols - 1)) / cols, (h - rows * lab - gap) / rows));
+    const ox = (w - (ts * cols + gap * (cols - 1))) / 2;
+    for (let j = 0; j < M; j++) {
+      const x = ox + (j % cols) * (ts + gap), y = Math.floor(j / cols) * (ts + lab + gap);
+      const img = heatImg(`fft|${FF.seed}|${FF.mode}|${FF.sig}|${FF.m}|${j}`, G, G, (r, c) => divRGB(FF.cs[j * G * G + r * G + c]));
+      drawImg(ctx, img, x, y, ts, ts, true);
+      ctx.strokeStyle = C.line; ctx.strokeRect(x, y, ts, ts);
+      const [bx, by] = FF.B[j];
+      text(ctx, `b${j} = (${num(bx)}, ${num(by)})`, x + ts / 2, y + ts + 4, C.ink, "center", "top", FS * .82);
+      text(ctx, `|b| = ${num(Math.hypot(bx, by))} waves`, x + ts / 2, y + ts + 4 + FS * 1.1, C.muted, "center", "top", FS * .78);
+    }
+  }
+}
+function ffPointer(e) {
+  const g = FF.geo; if (!g) return;
+  const [x, y] = localXY(e.currentTarget, e);
+  FF.v = [clamp((x - g.x0) / g.s, 0, 1), clamp(1 - (y - g.y0) / g.s, 0, 1)].map(v => Math.round(v * 100) / 100);
+  ffUpdate();
+}
+
+// =====================================================================
+// 6. Relative bias: Swin's per-head table over 2-D offsets
+// =====================================================================
+const SW = { M: 7, head: 0, q: [3, 3], seed: 5, C: null, noise: [], scan: null, geo: null };
+const SW_HEADS = [
+  ["local", (dr, dc) => -.42 * Math.hypot(dr, dc) + .3],
+  ["horizontal", (dr, dc) => -.8 * Math.abs(dr) - .07 * Math.abs(dc) + .3],
+  ["vertical", (dr, dc) => -.07 * Math.abs(dr) - .8 * Math.abs(dc) + .3],
+  ["up‑left", (dr, dc) => -.4 * Math.hypot(dr + 2, dc + 2) + .6]
+];
+(() => {
+  const r = rng(41);
+  for (let h = 0; h < 4; h++) SW.noise.push(Array.from({ length: 17 }, () => Array.from({ length: 17 }, () => .14 * gauss(r))));
+})();
+function swContent() {
+  const r = rng(SW.seed * 131 + 7);
+  SW.C = Array.from({ length: 81 }, () => Array.from({ length: 81 }, () => .7 * gauss(r)));
+}
+const swBias = (dr, dc) => 1.6 * SW_HEADS[SW.head][1](dr, dc) + SW.noise[SW.head][dr + 8][dc + 8];
+function swWeights(withBias) {
+  const M = SW.M, [qr, qc] = SW.q, qi = qr * M + qc, row = [];
+  for (let r = 0; r < M; r++) for (let c = 0; c < M; c++) row.push(SW.C[qi][r * M + c] + (withBias ? swBias(r - qr, c - qc) : 0));
+  return softmax(row);
+}
+function swBmax() { let m = 1e-6; const M = SW.M; for (let a = 1 - M; a < M; a++) for (let b = 1 - M; b < M; b++) m = Math.max(m, Math.abs(swBias(a, b))); return m; }
+function swUpdate() {
+  const M = SW.M;
+  SW.q = SW.q.map(x => Math.min(x, M - 1));
+  setText("rHO", `${SW.head + 1} · ${SW_HEADS[SW.head][0]}`);
+  setText("rMO", `${M}×${M}`);
+  const [qr, qc] = SW.q;
+  setText("rT3", `Attention of the query patch (${qr},${qc})`);
+  const a0 = swWeights(false), a1 = swWeights(true);
+  const md = a => a.reduce((s, x, j) => s + x * Math.hypot(Math.floor(j / M) - qr, j % M - qc), 0);
+  setTex($("rEq"), `\\(\\text{query }(${qr},${qc}):\\ \\ b_j=\\hat B\\big[\\Delta r+${M - 1},\\ \\Delta c+${M - 1}\\big]\\qquad \\text{mean distance attended}=\\textstyle\\sum_j a_j\\lVert\\Delta_j\\rVert:\\ ${tf(md(a0), 2)}\\ \\text{(content)}\\ \\to\\ \\class{ss}{\\mathbf{${tf(md(a1), 2)}}}\\ \\text{(content + bias)}\\)`, true);
+}
+function drawSw() {
+  if (SW.scan) {
+    const k = Math.floor((now() - SW.scan) / 320), M = SW.M;
+    if (k >= M * M) { SW.scan = null; swBtn(); }
+    else if (k !== SW.q[0] * M + SW.q[1]) { SW.q = [Math.floor(k / M), k % M]; swUpdate(); }
+  }
+  const M = SW.M, [qr, qc] = SW.q, bm = swBmax();
+  {
+    const { ctx, w, h } = fit($("cvR1")), S = Math.max(40, Math.min(w - FS * 2, h - FS)), x0 = (w - S) / 2, y0 = 2, cs = S / M;
+    SW.geo = { x0, y0, cs };
+    drawScene(ctx, x0, y0, S);
+    for (let r = 0; r < M; r++) for (let c = 0; c < M; c++) {
+      const b = swBias(r - qr, c - qc);
+      ctx.fillStyle = css(divRGB(b / bm)); ctx.globalAlpha = .72; ctx.fillRect(x0 + c * cs, y0 + r * cs, cs, cs); ctx.globalAlpha = 1;
+      if (cs > 34) text(ctx, tf(b, 1).replace("-", "−"), x0 + (c + .5) * cs, y0 + (r + .5) * cs, C.ink, "center", "middle", Math.min(FS * .9, cs * .28), 600);
+    }
+    for (let q = 0; q <= M; q++) { line(ctx, x0 + q * cs, y0, x0 + q * cs, y0 + S, rgba(C.surface, .7), 1.5); line(ctx, x0, y0 + q * cs, x0 + S, y0 + q * cs, rgba(C.surface, .7), 1.5); }
+    outline(ctx, x0 + qc * cs, y0 + qr * cs, cs, cs);
+  }
+  {
+    const { ctx, w, h } = fit($("cvR2")), n = 2 * M - 1, left = FS * 2.6, top = FS * 1.4;
+    const S = Math.max(30, Math.min(w - left - FS, h - top - FS * 1.6)), cs = S / n, x0 = left + Math.max(0, (w - left - FS - S) / 2), y0 = top;
+    for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) {
+      ctx.fillStyle = css(divRGB(swBias(a - M + 1, b - M + 1) / bm)); ctx.fillRect(x0 + b * cs, y0 + a * cs, cs + .5, cs + .5);
+    }
+    ctx.fillStyle = C.ink; ctx.beginPath(); ctx.arc(x0 + (M - .5) * cs, y0 + (M - .5) * cs, Math.max(2, cs * .14), 0, 7); ctx.fill();
+    outline(ctx, x0 + (M - 1 - qc) * cs, y0 + (M - 1 - qr) * cs, M * cs, M * cs);
+    text(ctx, "Δc →", x0 + S, y0 - 4, C.muted, "right", "bottom", FS * .85, 500, BODY);
+    text(ctx, "Δr ↓", x0, y0 - 4, C.muted, "left", "bottom", FS * .85, 500, BODY);
+    for (const v of [1 - M, 0, M - 1]) {
+      text(ctx, num(v), x0 - 5, y0 + (v + M - .5) * cs, C.muted, "right", "middle", FS * .8);
+      text(ctx, num(v), x0 + (v + M - .5) * cs, y0 + S + 4, C.muted, "center", "top", FS * .8);
+    }
+  }
+  {
+    const { ctx, w, h } = fit($("cvR3")), a0 = swWeights(false), a1 = swWeights(true), mx = Math.max(...a0, ...a1);
+    const gap = FS * 2, lab = FS * 1.6, S = Math.max(30, Math.min((w - gap) / 2, h - lab - 4)), cs = S / M, ox = (w - 2 * S - gap) / 2;
+    [[a0, "content only"], [a1, "content + bias"]].forEach(([a, name], k) => {
+      const x0 = ox + k * (S + gap), y0 = lab;
+      text(ctx, name, x0 + S / 2, y0 - 5, k ? C.sc : C.muted, "center", "bottom", FS * .95, 600, BODY);
+      for (let r = 0; r < M; r++) for (let c = 0; c < M; c++) {
+        ctx.fillStyle = css(virRGB(a[r * M + c] / mx)); ctx.fillRect(x0 + c * cs + .5, y0 + r * cs + .5, cs - 1, cs - 1);
+      }
+      outline(ctx, x0 + qc * cs, y0 + qr * cs, cs, cs);
+    });
+  }
+}
+function swBtn() { const b = $("rScan"); b.classList.toggle("running", !!SW.scan); b.querySelector("span").textContent = SW.scan ? "Stop" : "Scan queries"; }
+
+// =====================================================================
+// 7. 2-D axial RoPE
+// =====================================================================
+const RP0 = {
+  q: [1.6, .5, .8, -.6, .5, 1, -.7, .6, 1.2, .9, -.5, .7, .6, -.4, .3, .8],
+  k: [1.1, 1.2, .4, .9, -.6, .8, .9, .3, .7, 1.3, .8, -.2, -.5, .6, .9, .1],
+  pos: [6, 12, 10, 9]
+};
+const RP = { qx: 6, qy: 12, kx: 10, ky: 9, pair: 0, lb: 2, mode: "rope", q: RP0.q.slice(), k: RP0.k.slice(), shift: null, s: 0, drag: null, geo: null, hgeo: null, G: 32 };
+// pairs 0-3 turn with the column x, pairs 4-7 with the row y; same four frequencies on each axis
+const rpTh = p => Math.pow(10, -RP.lb * (p % 4) / 4);
+const rpAng = (p, x, y) => (p < 4 ? x : y) * rpTh(p);
+function rpEnc(v, x, y, mode = RP.mode) {
+  const o = v.slice();
+  for (let p = 0; p < 8; p++) {
+    const a = rpAng(p, x, y), c = Math.cos(a), s = Math.sin(a);
+    if (mode === "rope") { o[2 * p] = v[2 * p] * c - v[2 * p + 1] * s; o[2 * p + 1] = v[2 * p] * s + v[2 * p + 1] * c; }
+    else { o[2 * p] = v[2 * p] + s; o[2 * p + 1] = v[2 * p + 1] + c; }
+  }
+  return o;
+}
+const rpScore = (qx, qy, kx, ky, mode = RP.mode) => dot(rpEnc(RP.q, qx, qy, mode), rpEnc(RP.k, kx, ky, mode));
+function rpUpdate() {
+  for (const k of ["qx", "qy", "kx", "ky"]) { $("p" + k).value = RP[k]; setText("p" + k + "O", String(RP[k])); }
+  const p = RP.pair;
+  setText("pPO", `${p < 4 ? "x" : "y"} · ${num(rpTh(p))} rad`);
+  setText("pBO", String(Math.round(Math.pow(10, RP.lb))));
+  setText("pT1", `Pair ${p} of q and k · turns with the ${p < 4 ? "column x" : "row y"}`);
+  const key = RP.mode === "rope"
+    ? '<span><i class="sw" style="border-color:var(--q);border-top-style:dashed"></i>q</span><span><i class="sw" style="border-color:var(--q)"></i>q̃ (rotated)</span><span><i class="sw" style="border-color:var(--k);border-top-style:dashed"></i>k</span><span><i class="sw" style="border-color:var(--k)"></i>k̃ (rotated)</span><span><i class="sw" style="border-color:var(--sc)"></i>angle between</span>'
+    : '<span><i class="sw" style="border-color:var(--q);border-top-style:dashed"></i>q</span><span><i class="sw" style="border-color:var(--q)"></i>q + p</span><span><i class="sw" style="border-color:var(--k);border-top-style:dashed"></i>k</span><span><i class="sw" style="border-color:var(--k)"></i>k + p</span>';
+  if ($("pKey")._k !== key) { $("pKey")._k = key; $("pKey").innerHTML = key; }
+  const sc = rpScore(RP.qx, RP.qy, RP.kx, RP.ky), sh = rpScore(RP.qx + 10, RP.qy, RP.kx + 10, RP.ky);
+  const sym = RP.mode === "rope" ? "\\tilde q\\cdot\\tilde k" : "(q+p_q)\\cdot(k+p_k)";
+  setTex($("pEq"), `\\(q\\ \\text{at}\\ (${RP.qx},${RP.qy}),\\ k\\ \\text{at}\\ (${RP.kx},${RP.ky}),\\ \\Delta=(${RP.kx - RP.qx},${RP.ky - RP.qy}):\\quad ${sym}=\\class{ss}{\\mathbf{${tf(sc, 3)}}}\\qquad \\text{both 10 patches right: }\\class{${Math.abs(sh - sc) < 1e-9 ? "ss" : "qq"}}{\\mathbf{${tf(sh, 3)}}}\\)`, true);
+}
+function drawRp() {
+  if (RP.shift) {
+    const s = Math.floor((now() - RP.shift.t0) / 220), lim = RP.G - 1 - Math.max(RP.shift.qx, RP.shift.kx), ss = Math.min(s, lim);
+    if (RP.qx !== RP.shift.qx + ss) { RP.qx = RP.shift.qx + ss; RP.kx = RP.shift.kx + ss; RP.s = ss; rpUpdate(); }
+    if (s >= lim) { RP.shift = null; rpBtn(); }
+  }
+  const p = RP.pair, G = RP.G;
+  {
+    const { ctx, w, h } = fit($("cvP1")), R = 3.2, sc = Math.min(w, h) / (2 * R + .6), cx = w / 2, cy = h / 2;
+    RP.geo = { sc, cx, cy };
+    const P = (x, y) => [cx + x * sc, cy - y * sc];
+    for (let g = -3; g <= 3; g++) { line(ctx, ...P(g, -R), ...P(g, R), C.grid, 1); line(ctx, ...P(-R, g), ...P(R, g), C.grid, 1); }
+    line(ctx, ...P(-R, 0), ...P(R, 0), C.line, 1.2); line(ctx, ...P(0, -R), ...P(0, R), C.line, 1.2);
+    const q = [RP.q[2 * p], RP.q[2 * p + 1]], k = [RP.k[2 * p], RP.k[2 * p + 1]];
+    const qe = rpEnc(RP.q, RP.qx, RP.qy), ke = rpEnc(RP.k, RP.kx, RP.ky), qt = [qe[2 * p], qe[2 * p + 1]], kt = [ke[2 * p], ke[2 * p + 1]];
+    ctx.setLineDash([5, 4]); ctx.globalAlpha = .55;
+    arrow(ctx, cx, cy, ...P(...q), C.q, 2); arrow(ctx, cx, cy, ...P(...k), C.k, 2);
+    ctx.globalAlpha = 1; ctx.setLineDash([]);
+    if (RP.mode === "rope") {
+      const aq = Math.atan2(q[1], q[0]), ak = Math.atan2(k[1], k[0]);
+      const arc = (r, a0, sweep, col) => {
+        sweep = clamp(sweep, -2 * Math.PI + .01, 2 * Math.PI - .01);
+        if (Math.abs(sweep) < .01) return;
+        ctx.strokeStyle = col; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(cx, cy, r, -a0, -(a0 + sweep), sweep > 0); ctx.stroke();
+      };
+      arc(sc * .55, aq, rpAng(p, RP.qx, RP.qy), rgba(C.q, .8));
+      arc(sc * .75, ak, rpAng(p, RP.kx, RP.ky), rgba(C.k, .8));
+      const a1 = Math.atan2(qt[1], qt[0]); let d = Math.atan2(kt[1], kt[0]) - a1;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      ctx.strokeStyle = C.sc; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, sc * 1.05, -a1, -(a1 + d), d > 0); ctx.stroke();
+      const mid = a1 + d / 2;
+      text(ctx, `${(d * 180 / Math.PI).toFixed(0)}°`, cx + Math.cos(mid) * sc * 1.35, cy - Math.sin(mid) * sc * 1.35, C.sc, "center", "middle", FS * 1.05, 600);
+    } else {
+      arrow(ctx, ...P(...q), ...P(...qt), rgba(C.q, .55), 1.4);
+      arrow(ctx, ...P(...k), ...P(...kt), rgba(C.k, .55), 1.4);
+    }
+    arrow(ctx, cx, cy, ...P(...qt), C.q, 3.2);
+    arrow(ctx, cx, cy, ...P(...kt), C.k, 3.2);
+    text(ctx, RP.mode === "rope" ? "q̃" : "q+p", ...P(qt[0] * 1.12, qt[1] * 1.12), C.q, "center", "middle", FS * 1.15, 600);
+    text(ctx, RP.mode === "rope" ? "k̃" : "k+p", ...P(kt[0] * 1.12, kt[1] * 1.12), C.k, "center", "middle", FS * 1.15, 600);
+    text(ctx, `pair dot = ${fmt(qt[0] * kt[0] + qt[1] * kt[1])}`, 8, h - 8, C.ink, "left", "bottom", FS * .95, 600);
+  }
+  {
+    const { ctx, w, h } = fit($("cvP2")), left = FS * 2.4, top = FS * 1.4;
+    const S = Math.max(30, Math.min(w - left - FS * .6, h - top - FS * .4)), cs = S / G, gx = left + Math.max(0, (w - left - S) / 2), gy = top;
+    RP.hgeo = { gx, gy, cs };
+    let mx = 1e-6; const Sc = [];
+    for (let y = 0; y < G; y++) { Sc.push([]); for (let x = 0; x < G; x++) { const v = rpScore(RP.qx, RP.qy, x, y); Sc[y].push(v); mx = Math.max(mx, Math.abs(v)); } }
+    const img = heatImg(`rp2|${RP.mode}|${RP.lb}|${RP.qx},${RP.qy}|${RP.q.join()}|${RP.k.join()}`, G, G, (y, x) => divRGB(Sc[y][x] / mx));
+    drawImg(ctx, img, gx, gy, S, S);
+    ctx.lineWidth = 4; ctx.strokeStyle = "#ffffff"; ctx.beginPath(); ctx.arc(gx + (RP.qx + .5) * cs, gy + (RP.qy + .5) * cs, Math.max(5, cs * .7), 0, 7); ctx.stroke();
+    ctx.lineWidth = 2; ctx.strokeStyle = "#15202c"; ctx.stroke();
+    outline(ctx, gx + RP.kx * cs, gy + RP.ky * cs, cs, cs);
+    text(ctx, "column x →", gx + S, gy - 4, C.muted, "right", "bottom", FS * .85, 500, BODY);
+    text(ctx, "row y ↓", gx, gy - 4, C.muted, "left", "bottom", FS * .85, 500, BODY);
+    for (let i = 0; i < G; i += 8) text(ctx, String(i), gx - 5, gy + cs * (i + .5), C.muted, "right", "middle", FS * .8);
+  }
+  {
+    const { ctx, w, h } = fit($("cvP3")), box = stdBox(w, h, 3.4, 1.2, 1.2, 3);
+    const s0 = RP.shift ? RP.shift : { qx: RP.qx, kx: RP.kx }, S = 31;
+    const r1 = [], r2 = [];
+    for (let s = 0; s <= S; s++) { r1.push(rpScore(s0.qx + s, RP.qy, s0.kx + s, RP.ky, "rope")); r2.push(rpScore(s0.qx + s, RP.qy, s0.kx + s, RP.ky, "add")); }
+    const lo = Math.min(...r1, ...r2), hi = Math.max(...r1, ...r2), pad = (hi - lo) * .12 + .2;
+    const { X, Y } = frame(ctx, box, [0, S], [lo - pad, hi + pad], { xl: "slide s (patches)" });
+    polyline(ctx, r2.map((v, s) => [X(s), Y(v)]), C.q, RP.mode === "add" ? 2.6 : 1.4);
+    polyline(ctx, r1.map((v, s) => [X(s), Y(v)]), C.sc, RP.mode === "rope" ? 2.8 : 1.4);
+    const sc = RP.shift ? RP.s : 0;
+    line(ctx, X(sc), box.y, X(sc), box.y + box.h, C.ink, 1, [3, 3]);
+    for (const [arr, col] of [[r1, C.sc], [r2, C.q]]) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(X(sc), Y(arr[sc]), 4, 0, 7); ctx.fill(); }
+  }
+}
+function rpBtn() { const b = $("pShift"); b.classList.toggle("running", !!RP.shift); b.querySelector("span").textContent = RP.shift ? "Stop" : "Slide both right"; }
+function rpPick(e) {
+  const g = RP.geo, [x, y] = localXY(e.currentTarget, e), p = RP.pair;
+  const vx = (x - g.cx) / g.sc, vy = -(y - g.cy) / g.sc;
+  const tq = rpEnc(RP.q, RP.qx, RP.qy), tk = rpEnc(RP.k, RP.kx, RP.ky);
+  const dq = Math.hypot(tq[2 * p] - vx, tq[2 * p + 1] - vy) * g.sc, dk = Math.hypot(tk[2 * p] - vx, tk[2 * p + 1] - vy) * g.sc;
+  return { which: dq <= dk ? (dq < 40 ? "q" : null) : (dk < 40 ? "k" : null), vx, vy };
+}
+function rpDrag(e) {
+  const { vx, vy } = rpPick(e), p = RP.pair, which = RP.drag, v = RP[which];
+  const a = which === "q" ? rpAng(p, RP.qx, RP.qy) : rpAng(p, RP.kx, RP.ky);
+  let x = clamp(vx, -3, 3), y = clamp(vy, -3, 3);
+  if (RP.mode === "rope") { const c = Math.cos(-a), s = Math.sin(-a); [x, y] = [x * c - y * s, x * s + y * c]; }
+  else { x -= Math.sin(a); y -= Math.cos(a); }
+  v[2 * p] = Math.round(x * 100) / 100; v[2 * p + 1] = Math.round(y * 100) / 100;
+  rpUpdate();
+}
+
+// =====================================================================
+// navigation
+// =====================================================================
+const CH = ["order", "abs", "bits", "sin", "ff", "rel", "rope"];
+const GROUP = { order: 0, abs: 1, bits: 2, sin: 2, ff: 2, rel: 3, rope: 4 };
+const GSTART = ["order", "abs", "bits", "rel", "rope"];
+const DRAW = { order: () => { drawOr(0); drawOr(1); }, abs: drawAb, bits: drawBi, sin: drawSi, ff: drawFF, rel: drawSw, rope: drawRp };
+const PLAY = { order: "oShuf", abs: "aGrow", bits: "bPlay", sin: "sPlay", ff: "fNew", rel: "rScan", rope: "pShift" };
+let cur = "order";
+function show(id) {
+  cur = id;
+  const ci = CH.indexOf(id);
+  for (const c of CH) { $("r-" + c).hidden = c !== id; $("v-" + c).hidden = c !== id; }
+  document.querySelectorAll(".vtab").forEach(b => { const on = b.dataset.v === id; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll("#trail button").forEach(b => { const g = +b.dataset.g; b.classList.toggle("lit", g === GROUP[id]); b.classList.toggle("done", g < GROUP[id]); });
+  $("prev").disabled = ci === 0; $("next").disabled = ci === CH.length - 1;
+  $("rail-scroll").scrollTop = 0;
+  typesetVisible();
+}
+
+// ---------- wiring ----------
+document.querySelector(".rail-body").id = "rail-scroll";
+document.querySelectorAll(".vtab").forEach(b => b.addEventListener("click", () => show(b.dataset.v)));
+document.querySelectorAll("#trail button").forEach(b => b.addEventListener("click", () => show(GSTART[+b.dataset.g])));
+document.querySelector(".vtabs").addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const i = CH.indexOf(cur), n = CH[(i + (e.key === "ArrowRight" ? 1 : CH.length - 1)) % CH.length];
+  show(n); document.querySelector(`.vtab[data-v="${n}"]`).focus(); e.preventDefault();
+});
+$("prev").addEventListener("click", () => { const i = CH.indexOf(cur); if (i > 0) show(CH[i - 1]); });
+$("next").addEventListener("click", () => { const i = CH.indexOf(cur); if (i < CH.length - 1) show(CH[i + 1]); });
+const radios = (name, fn) => document.querySelectorAll(`input[name=${name}]`).forEach(r => r.addEventListener("change", () => fn(r.value)));
+
+// 1
+$("oShuf").addEventListener("click", () => {
+  const o = OR.ord.slice();
+  do { for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; } } while (o.join() === OR.ord.join());
+  orSet(o);
+});
+$("oReset").addEventListener("click", () => { OR.pe = false; $("oPE").checked = false; OR.hov = 2; orSet(OR.START.slice()); });
+$("oPE").addEventListener("change", e => { OR.pe = e.target.checked; orUpdate(null); });
+for (const w of [0, 1]) $(w ? "cvO2" : "cvO1").addEventListener("pointermove", e => orHover(w, e));
+// 2
+radios("aM", v => { AB.m = v; abUpdate(); });
+$("aG").addEventListener("input", e => { AB.grow = null; growBtn(); AB.G = +e.target.value; abUpdate(); });
+$("aI").addEventListener("change", e => { AB.interp = e.target.checked; abUpdate(); });
+$("aGrow").addEventListener("click", () => {
+  if (AB.grow) AB.grow = null;
+  else if (RM.matches) { AB.G = 24; abUpdate(); }
+  else { AB.G = 4; abUpdate(); AB.grow = { t0: now(), G0: 4 }; }
+  growBtn();
+});
+$("cvA1").addEventListener("pointerdown", e => {
+  const g = AB.geo; if (!g) return;
+  const [x, y] = localXY(e.currentTarget, e), r = Math.floor((y - g.y0) / g.cs), c = Math.floor((x - g.x0) / g.cs);
+  if (r >= 0 && r < AB.G && c >= 0 && c < AB.G) { AB.pr = [r, c]; abUpdate(); }
+});
+// 3
+radios("bM", v => { BI.m = v; biUpdate(); });
+$("bT").addEventListener("input", e => { BI.play = null; biBtn(); BI.t = +e.target.value; biUpdate(); });
+$("bPlay").addEventListener("click", () => {
+  if (BI.play) BI.play = null;
+  else if (RM.matches) { BI.t = Math.min(62, Math.floor(BI.t) + 1); biUpdate(); }
+  else BI.play = { t0: now(), t0v: BI.t >= 61.9 ? 0 : Math.floor(BI.t) };
+  biBtn();
+});
+$("b31").addEventListener("click", () => { BI.play = null; biBtn(); BI.t = 31; biUpdate(); });
+// 4
+$("sD").addEventListener("input", e => { SI.d = +e.target.value; siUpdate(); });
+$("sB").addEventListener("input", e => { SI.lb = +e.target.value; siUpdate(); });
+$("sT").addEventListener("input", e => { SI.play = null; siBtn(); SI.t = +e.target.value; siUpdate(); });
+$("sK").addEventListener("input", e => { SI.k = +e.target.value; siUpdate(); });
+$("sPlay").addEventListener("click", () => {
+  if (SI.play) SI.play = null;
+  else if (RM.matches) { SI.t = (Math.round(SI.t) + 5) % SI.N; siUpdate(); }
+  else SI.play = { t0: now(), t0v: SI.t };
+  siBtn();
+});
+// 5
+radios("fM", v => { FF.mode = v; ffBuild(); });
+let ffT = 0;
+const ffLater = () => { clearTimeout(ffT); ffT = setTimeout(ffBuild, 60); };
+$("fS").addEventListener("input", e => { FF.sig = +e.target.value; setText("fSO", String(FF.sig)); ffLater(); });
+$("fMm").addEventListener("input", e => { FF.m = +e.target.value; setText("fMmO", String(FF.m)); ffLater(); });
+$("fNew").addEventListener("click", () => { FF.seed++; ffBuild(); });
+{
+  const cv = $("cvF1");
+  cv.addEventListener("pointerdown", e => { FF.drag = true; cv.setPointerCapture(e.pointerId); ffPointer(e); });
+  cv.addEventListener("pointermove", e => { if (FF.drag) ffPointer(e); });
+  cv.addEventListener("pointerup", () => FF.drag = false);
+  cv.addEventListener("pointercancel", () => FF.drag = false);
+}
+// 6
+$("rH").addEventListener("input", e => { SW.head = +e.target.value - 1; swUpdate(); });
+$("rM").addEventListener("input", e => { SW.M = +e.target.value; swUpdate(); });
+$("rNew").addEventListener("click", () => { SW.seed++; swContent(); swUpdate(); });
+$("rScan").addEventListener("click", () => { SW.scan = SW.scan || RM.matches ? null : now(); swBtn(); });
+$("cvR1").addEventListener("pointerdown", e => {
+  const g = SW.geo; if (!g) return;
+  const [x, y] = localXY(e.currentTarget, e), r = Math.floor((y - g.y0) / g.cs), c = Math.floor((x - g.x0) / g.cs);
+  if (r >= 0 && r < SW.M && c >= 0 && c < SW.M) { SW.scan = null; swBtn(); SW.q = [r, c]; swUpdate(); }
+});
+// 7
+radios("pM", v => { RP.mode = v; rpUpdate(); });
+for (const k of ["qx", "qy", "kx", "ky"]) $("p" + k).addEventListener("input", e => { RP.shift = null; rpBtn(); RP[k] = +e.target.value; rpUpdate(); });
+$("pP").addEventListener("input", e => { RP.pair = +e.target.value; rpUpdate(); });
+$("pB").addEventListener("input", e => { RP.lb = +e.target.value; rpUpdate(); });
+$("pShift").addEventListener("click", () => {
+  if (RP.shift) { RP.shift = null; rpBtn(); return; }
+  if (Math.max(RP.qx, RP.kx) >= RP.G - 1) { const d = Math.min(RP.qx, RP.kx); RP.qx -= d; RP.kx -= d; }
+  if (RM.matches) { const d = Math.min(5, RP.G - 1 - Math.max(RP.qx, RP.kx)); RP.qx += d; RP.kx += d; rpUpdate(); return; }
+  RP.shift = { t0: now(), qx: RP.qx, kx: RP.kx }; RP.s = 0; rpUpdate(); rpBtn();
+});
+$("pReset").addEventListener("click", () => {
+  RP.shift = null; rpBtn(); RP.q = RP0.q.slice(); RP.k = RP0.k.slice(); [RP.qx, RP.qy, RP.kx, RP.ky] = RP0.pos;
+  RP.mode = "rope"; RP.pair = 0; RP.lb = 2;
+  document.querySelector('input[name=pM][value=rope]').checked = true; $("pP").value = 0; $("pB").value = 2; rpUpdate();
+});
+{
+  const cv = $("cvP1");
+  cv.addEventListener("pointerdown", e => { const { which } = rpPick(e); if (!which) return; RP.drag = which; cv.setPointerCapture(e.pointerId); rpDrag(e); });
+  cv.addEventListener("pointermove", e => { if (RP.drag) rpDrag(e); else cv.style.cursor = rpPick(e).which ? "grab" : "default"; });
+  cv.addEventListener("pointerup", () => RP.drag = null);
+  cv.addEventListener("pointercancel", () => RP.drag = null);
+  $("cvP2").addEventListener("pointerdown", e => {
+    const g = RP.hgeo; if (!g) return;
+    const [x, y] = localXY(e.currentTarget, e), kx = Math.floor((x - g.gx) / g.cs), ky = Math.floor((y - g.gy) / g.cs);
+    if (kx >= 0 && kx < RP.G && ky >= 0 && ky < RP.G) { RP.shift = null; rpBtn(); RP.kx = kx; RP.ky = ky; rpUpdate(); }
+  });
+}
+
+// resets and stepping
+const setRadio = (name, v) => { const r = document.querySelector(`input[name=${name}][value=${v}]`); if (r) r.checked = true; };
+$("aReset").addEventListener("click", () => {
+  AB.grow = null; growBtn(); AB.m = "int"; AB.G = 14; AB.interp = true; AB.pr = [5, 9];
+  setRadio("aM", "int"); $("aI").checked = true; abUpdate();
+});
+function biStep(d) { BI.play = null; biBtn(); BI.t = clamp(Math.floor(BI.t + 1e-9) + d, 0, 62); biUpdate(); }
+$("bPrev").addEventListener("click", () => biStep(-1));
+$("bNext").addEventListener("click", () => biStep(1));
+$("bReset").addEventListener("click", () => { BI.play = null; biBtn(); BI.m = "bin"; BI.t = 0; setRadio("bM", "bin"); biUpdate(); });
+$("sReset").addEventListener("click", () => {
+  SI.play = null; siBtn(); SI.d = 64; SI.lb = 4; SI.t = 20; SI.k = 6;
+  $("sD").value = 64; $("sB").value = 4; $("sK").value = 6; siUpdate();
+});
+$("fReset").addEventListener("click", () => {
+  FF.mode = "gauss"; FF.sig = 3; FF.m = 128; FF.seed = 3; FF.v = [.38, .62];
+  setRadio("fM", "gauss"); $("fS").value = 3; $("fMm").value = 128; ffBuild();
+});
+$("rReset").addEventListener("click", () => {
+  SW.scan = null; swBtn(); SW.head = 0; SW.M = 7; SW.q = [3, 3]; SW.seed = 5;
+  $("rH").value = 1; $("rM").value = 7; swContent(); swUpdate();
+});
+
+// keyboard, full screen, theme
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  const tag = e.target && e.target.tagName;
+  if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+  if (e.key >= "1" && e.key <= "7") { show(CH[+e.key - 1]); e.preventDefault(); }
+  else if (e.key === " " && tag !== "BUTTON") { $(PLAY[cur]).click(); e.preventDefault(); }
+  else if (cur === "bits" && (e.key === "ArrowLeft" || e.key === "ArrowRight") && !e.target.closest(".vtabs")) { biStep(e.key === "ArrowRight" ? 1 : -1); e.preventDefault(); }
+});
+if (!document.fullscreenEnabled) $("fs").hidden = true;
+$("fs").addEventListener("click", () => {
+  if (document.fullscreenElement) { document.exitFullscreen && document.exitFullscreen().catch(() => {}); return; }
+  const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  p && p.catch && p.catch(() => { $("fs").hidden = true; });
+});
+document.addEventListener("fullscreenchange", () => { $("fs").textContent = document.fullscreenElement ? "Exit Full Screen" : "Full Screen"; });
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", readTheme); } catch (_) {}
+new MutationObserver(readTheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+window.addEventListener("resize", readTheme);
+
+// ---------- start ----------
+readTheme();
+orUpdate(null);
+abUpdate();
+biUpdate();
+siUpdate();
+ffBuild();
+swContent(); swUpdate();
+rpUpdate();
+show(CH.includes(location.hash.slice(1)) ? location.hash.slice(1) : "order");
+if (window.MathJax && MathJax.startup && MathJax.startup.document && MathJax.typesetPromise) window.__mjReady();
+requestAnimationFrame(function loop() {
+  try { DRAW[cur](); } catch (err) { console.error(err); }
+  requestAnimationFrame(loop);
+});
+})();
+</script></body></html>
